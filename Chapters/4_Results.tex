@@ -1,0 +1,202 @@
+\chapter{Results and Analysis}
+\label{results}
+This chapter details the testing and effectiveness of the model. First, the accuracy of the classifier and localisation components were tested before testing the accuracy of the combined solution.
+
+\section{Image Classification}
+The classification component was tested using a set of 100 new images (not used in training) obtained from the Google Street View API. Of these 100 images, 50 contained bins while the other 50 were images of background scenery.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=9cm]{Figures/4_test_set.jpg}
+\decoRule
+\caption[Testing Set]{Random sample of images taken from the test set}
+\label{fig:test_set}
+\end{figure}
+
+Table \ref{tab:classifier_results} lists the test scores for the 100 images. The left half of the table lists the 50 bin images as well as their assigned label and the score given to that label. The right half shows the 50 background images along with their labels and scores. Of the 100 images, none were assigned the incorrect label. The average score for bin images was 0.915263 ($91.5\%$) while the average score for background images was 0.946238 ($94.6\%$). Of the 50 bin images, 6 received scores lower than $80\%$ while only 2 background images received scores below this mark. The model is thus more prone to false negatives than false positives.
+
+\begin{table}[H]
+\caption[Classifier Results]{The first 50 images were bins while the second 50 were in the unknown category}
+\label{tab:classifier_results}
+\centering
+\begin{tabular}{c l c | c l c}
+\toprule
+\textbf{Image} & \textbf{Label} & \textbf{Score} & \textbf{Image} & \textbf{Label} & \textbf{Score} \\
+\midrule
+1 & Bin & 0.99510 & 1 & Unknown & 0.99416 \\
+2 & Bin & 0.97168 & 2 & Unknown & 0.99246 \\
+3 & Bin & 0.99604 & 3 & Unknown & 0.97483 \\
+4 & Bin & 0.97873 & 4 & Unknown & 0.69017 \\
+5 & Bin & 0.95448 & 5 & Unknown & 0.88411 \\
+6 & Bin & 0.99177 & 6 & Unknown & 0.97328 \\
+7 & Bin & 0.94422 & 7 & Unknown & 0.96425 \\
+8 & Bin & 0.97516 & 8 & Unknown & 0.97584 \\
+9 & Bin & 0.93518 & 9 & Unknown & 0.99351 \\
+10 & Bin & 0.99569 & 10 & Unknown & 0.99092 \\
+11 & Bin & 0.99642 & 11 & Unknown & 0.99392 \\
+12 & Bin & 0.99771 & 12 & Unknown & 0.96450 \\
+13 & Bin & 0.96212 & 13 & Unknown & 0.98031 \\
+14 & Bin & 0.95361 & 14 & Unknown & 0.99620 \\
+15 & Bin & 0.99259 & 15 & Unknown & 0.93162 \\
+16 & Bin & 0.98221 & 16 & Unknown & 0.92277 \\
+17 & Bin & 0.65201 & 17 & Unknown & 0.79498 \\
+18 & Bin & 0.85576 & 18 & Unknown & 0.94493 \\
+19 & Bin & 0.99814 & 19 & Unknown & 0.95691 \\
+20 & Bin & 0.91452 & 20 & Unknown & 0.96963 \\
+21 & Bin & 0.99283 & 21 & Unknown & 0.99593 \\
+22 & Bin & 0.98245 & 22 & Unknown & 0.94012 \\
+23 & Bin & 0.98474 & 23 & Unknown & 0.96071 \\
+24 & Bin & 0.56839 & 24 & Unknown & 0.98854 \\
+25 & Bin & 0.80721 & 25 & Unknown & 0.95303 \\
+26 & Bin & 0.79758 & 26 & Unknown & 0.90789 \\
+27 & Bin & 0.98950 & 27 & Unknown & 0.68454 \\
+28 & Bin & 0.99651 & 28 & Unknown & 0.96840 \\
+29 & Bin & 0.99171 & 29 & Unknown & 0.99025 \\
+30 & Bin & 0.98133 & 30 & Unknown & 0.99609 \\
+31 & Bin & 0.84300 & 31 & Unknown & 0.99819 \\
+32 & Bin & 0.88112 & 32 & Unknown & 0.99299 \\
+33 & Bin & 0.99719 & 33 & Unknown & 0.65321 \\
+34 & Bin & 0.99900 & 34 & Unknown & 0.91507 \\
+35 & Bin & 0.90885 & 35 & Unknown & 0.97868 \\
+36 & Bin & 0.95726 & 36 & Unknown & 0.85557 \\
+37 & Bin & 0.95127 & 37 & Unknown & 0.99111 \\
+38 & Bin & 0.78351 & 38 & Unknown & 0.99231 \\
+39 & Bin & 0.87865 & 39 & Unknown & 0.98978 \\
+40 & Bin & 0.62734 & 40 & Unknown & 0.94833 \\
+41 & Bin & 0.93245 & 41 & Unknown & 0.94268 \\
+42 & Bin & 0.89876 & 42 & Unknown & 0.92878 \\
+43 & Bin & 0.89276 & 43 & Unknown & 0.98947 \\
+44 & Bin & 0.97928 & 44 & Unknown & 0.97500 \\
+45 & Bin & 0.97873 & 45 & Unknown & 0.99554 \\
+46 & Bin & 0.85428 & 46 & Unknown & 0.99767 \\
+47 & Bin & 0.91452 & 47 & Unknown & 0.97670 \\
+48 & Bin & 0.98539 & 48 & Unknown & 0.94308 \\
+49 & Bin & 0.54504 & 49 & Unknown & 0.97751 \\
+50 & Bin & 0.81934 & 50 & Unknown & 0.99541 \\
+\bottomrule\\
+\end{tabular}
+\end{table}
+
+\section{Object Localisation}
+The object localisation component was tested by comparing the calculated image co-ordinates of a detected bin to the position in the image in which the bin actually appears. Figure \ref{fig:localisation_error} shows the result of the moving window algorithm combined with the image classifier. The whole image was first segmented into 273 sub-images, each measuring 85 x 65 pixels in size. Each window was then classified and the window which was labelled as a bin was chosen as the location of the bin in the image.
+
+As discussed in section \ref{moving_window}, where the same bin was detected in multiple windows, the weighted mean algorithm was used to calculate a refined image location of the bin.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=14cm]{Figures/4_localisation_error.pdf}
+\decoRule
+\caption[Localisation Accuracy]{Green bounding box shows the detected location of the bin within the image}
+\label{fig:localisation_error}
+\end{figure}
+
+The centre point of the green bounding box is taken as the location of the bin in the image. The co-ordinates of this centre point are compared to the co-ordinates of the actual bin centre, measured manually using a point-and-click method. In figure \ref{fig:localisation_error}, the error is measured as -3x, -2y. That means the detected position of the centre of the bin is 3 pixels left, and 2 pixels below where the bin actually appears in the image.
+
+This process was repeated for 20 different images, the results are shown below in table \ref{tab:localisation_results}. The Mean Absolute Deviation (MAD) is given in the bottom row.
+
+\begin{table}[H]
+\caption[Localisation Results]{Accuracies of the image locations of 20 detected bins. All co-ordinates and errors are given in pixels.}
+\label{tab:localisation_results}
+\centering
+\begin{tabular}{c r r r r r r}
+\toprule
+\textbf{Bin Number} & \textbf{True X} & \textbf{True Y} & \textbf{Detected X} & \textbf{Detected Y} & \textbf{X Error} & \textbf{Y Error} \\
+\midrule
+1 & -45 & -96 & -45 & -93 & 0 & 3 \\
+2 & -28 & -112 & -30 & -93 & -2 & 19 \\
+3 & -43 & -83 & -45 & -93 & -2 & -10 \\
+4 & -29 & -130 & -30 & -139 & -1 & -9 \\
+5 & -68 & -92 & -59 & -93 & 9 & -1 \\
+6 & -14 & -72 & -16 & -46 & -2 & 19 \\
+7 & 0 & -58 & -1 & -46 & -1 & 12 \\
+8 & -34 & -82 & -30 & -93 & 4 & -11 \\
+9 & -53 & -104 & -59 & -93 & -6 & 11 \\
+10 & -38 & -70 & -30 & -46 & 8 & 24 \\
+11 & -21 & -130 & -30 & -139 & -9 & -9 \\
+12 & -13 & -72 & -16 & -93 & -3 & -21 \\
+13 & 1 & -97 & -1 & -93 & -2 & 4 \\
+14 & -18 & -63 & -30 & -46 & -12 & 17 \\
+15 & -120 & -71 & -118 & -93 & 2 & -22 \\
+16 & 171 & -38 & 176 & -46 & 5 & -8 \\
+17 & 7 & -68 & -1 & -93 & -8 & -25 \\
+18 & -186 & -75 & -176 & -93 & 10 & -18 \\
+19 & -7 & -125 & -1 & -139 & 6 & -14 \\
+20 & -30 & -89 & -30 & -93 & 0 & -4 \\
+\bottomrule\\
+& & & & MAD & 4.6 & 13.0 \\
+\end{tabular}
+\end{table}
+
+The largest error in the x component was -12 pixels while the largest error in the y component was -25 pixels. The mean absolute deviation for the sample was 4.6 pixels in the x component and 13.0 pixels in the y component.
+
+\section{Combined Solution}
+Finally, the moving window and classifier were combined with the intersection algorithm to calculate the real-world positions of detected bins in the WG19 co-ordinate system. 
+
+The image was first split up into a total of 273 equal-sized windows. Each window was then classified and, if a window was classed as a bin, then the centre of the window was taken as the location of that bin. This was done for two separate Street View images which contained the same bin. Finally, the bin's position was calculated by intersection of the imaging rays from the two cameras to the bin.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=11cm]{Figures/4_combine_solution.pdf}
+\decoRule
+\caption[Final Solution]{Two Street View images used to obtain real-world co-ordinates of detected bin}
+\label{fig:combined_solution_result}
+\end{figure}
+
+Figure \ref{fig:combined_solution_result} shows an example of the final step in the feature placement process. Each of the two images have known positions and orientations - the parameters obtained for the image from GSV are the latitude and longitude of the camera centre, and the heading and pitch of the camera. The heading is given as the angle measured clockwise from North while pitch is the vertical angle from the horizontal plane. In each image, the location of the bin is represented by the green bounding box which has known image co-ordinates of its centre. Using all of this information, the co-ordinate for the bins is then calculated.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=11cm]{Figures/4_bin_actual.pdf}
+\decoRule
+\caption[Point-and-click positioning]{The true position of the bin is obtained from Google Maps Satellite View}
+\label{fig:bin_actual}
+\end{figure}
+
+The true co-ordinates were obtained from Google Maps in satellite view. The position of the bin in the Street View photos is used to get a near-true position of the bin in the overhead view for comparison with the calculated position. It was essential to check that the bin was undisturbed in each image (aerial and street-level). Often, the bins are physically attached to lamp posts but in some cases they are free-standing. Free-standing bins should be marked in the same spot on the aerial images as they appear in the street-level imagery. 
+
+Co-ordinates of point-and-click features in Google Maps are given in latitude and longitude up to six decimal places. This is sufficient for up to 0.12m accuracy. Latitude and longitude were converted into Cartesian co-ordinates using the Gauss conformal module.
+
+The same process was repeated for 20 separate bins. The results for each bin are given below in table \ref{tab:final_results}.
+
+\begin{table}[H]
+\caption[Final Results]{Accuracies of the real-world locations of 20 detected bins}
+\label{tab:final_results}
+\centering
+\begin{tabular}{c r r r r r}
+\toprule
+\textbf{Bin Number} & \textbf{True X} & \textbf{True Y} & \textbf{Calculated X} & \textbf{Calculated Y} & \textbf{Error (m)} \\
+\midrule
+1 & 55623.59 & 54312.63 & 55624.70 & 54312.56 & 1.11 \\
+2 & 55605.99 & 54279.26 & 55607.28 & 54279.17 & 1.30 \\
+3 & 55572.20 & 54268.17 & 55573.78 & 54267.59 & 1.68 \\
+4 & 55567.65 & 54248.68 & 55567.81 & 54247.91 & 0.79 \\
+5 & 55546.21 & 54242.89 & 55546.55 & 54243.22 & 0.47 \\
+6 & 55502.17 & 54202.73 & 55502.51 & 54203.09 & 0.49 \\
+7 & 55512.21 & 54193.61 & 55513.91 & 54192.02 & 2.33 \\
+8 & 55459.81 & 54167.19 & 55463.67 & 54164.19 & 4.88 \\
+9 & 55467.49 & 54151.98 & 55469.37 & 54154.00 & 2.77 \\
+10 & 55375.99 & 54096.74 & 55377.46 & 54096.60 & 1.47 \\
+11 & 55355.14 & 54077.16 & 55355.71 & 54076.81 & 0.67 \\
+12 & 55332.50 & 54056.11 & 55335.97 & 54057.50 & 3.74 \\
+13 & 55352.39 & 54003.20 & 55350.81 & 54003.70 & 1.66 \\
+14 & 55344.91 & 54014.15 & 55345.80 & 54013.65 & 1.03 \\
+15 & 55357.15 & 54020.83 & 55358.93 & 54020.74 & 1.79 \\
+16 & 55369.93 & 53986.27 & 55370.80 & 53985.84 & 0.97 \\
+17 & 55375.54 & 53978.93 & 55375.15 & 53980.69 & 1.80 \\
+18 & 55258.03 & 53874.46 & 55258.46 & 53875.44 & 1.07 \\
+19 & 55202.91 & 53817.72 & 55202.77 & 53819.22 & 1.51 \\
+20 & 55157.10 & 53778.21 & 55156.90 & 53779.18 & 0.99 \\
+\bottomrule\\
+& & & & Average: & 1.63 \\
+\end{tabular}
+\end{table}
+
+For each bin, the true X and Y Cartesian co-ordinates obtained directly from Google Maps are compared to the co-ordinates calculated during the combined solution. The positional error for each bin is calculated as follows:
+
+\begin{equation}
+    r = \sqrt{\Delta x^2+\Delta y^2}
+\end{equation}
+
+The error provides an absolute measure of how far the calculated bin position is from the bin's actual position. The largest error was 4.88m (bin number 8), while the smallest error was 0.49m (bin number 6). $80\%$ of the bins were placed within 1.8m of their actual position and the average error was 1.63m.
+
+By precise surveying standards, this would not be acceptable. But for the purpose of this project, this level of accuracy is suitable for being able to say which street corner a bin appears on, or which side of the road a certain bus stop is found etc.

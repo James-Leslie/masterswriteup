@@ -1,0 +1,96 @@
+% Appendix A
+
+\chapter{Convolutional Neural Networks} % Main appendix title
+
+\label{AppendixA} % For referencing this appendix elsewhere, use \ref{AppendixA}
+
+\section*{Features}
+CNNs compare images by looking for certain features in the image. The example shown in figure \ref{fig:2:features} is of an image of an X being classified based on the presence of typical X features.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{Figures/2_features.png}
+\decoRule
+\caption[Features of an image]{Features of an X include diagonal lines and an intersecting point \parencite{convolution2}}
+\label{fig:2:features}
+\end{figure}
+
+Smaller mini-images of the diagonals and the cross at the centre are used as features. The image is searched for the presence of these features at every position.
+
+\section*{Convolution}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{Figures/2_filter.png}
+\decoRule
+\caption[Image Filter]{A single feature is used to create a filter \parencite{convolution2}}
+\label{fig:2:filter}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{Figures/2_convolution.png}
+\decoRule
+\caption[Convolution]{Convolution is the process of creating multiple filters from a single image \parencite{convolution2}}
+\label{fig:2:convolution}
+\end{figure}
+
+Each mini-image is essentially a kernel which is passed across the original image at every position to make a filter.
+The resulting filter is a matrix of scores, where a value of 1.0 indicates a perfect match of the feature at that position in the image. When multiple filters are created from a single image, this process is called convolution.
+
+\section*{Pooling}
+To reduce the size of the input image consisting of thousands of pixels down to the final n-dimensional (for n number of classes) score vector, pooling is required. In pooling, a window of a chosen size is moved around the image at a chosen stride. At each stride, the maximum value of the window is chosen and is passed into a smaller pool of values. Passing the maximum value into the pool means that there is no loss of features during this stage.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{Figures/2_pooling.png}
+\decoRule
+\caption[Pooling]{Maximum values are chosen to represent the entire window \parencite{convolution2}}
+\label{fig:2:pooling}
+\end{figure}
+
+This simple procedure can greatly reduce image sizes and thus computational load on the network while still preserving the key features in an image.
+
+To avoid negative values in the filters, an additional step known as rectification is followed. \textbf{Rectified linear units (ReLU)} are used to convert all negative values to zero.
+
+\section*{Deep Learning}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=12cm]{Figures/2_network.png}
+\decoRule
+\caption[Deep Learning]{Pooling and convolution layers are stacked to form the network \parencite{convolution2}}
+\label{fig:2:deeplearning}
+\end{figure}
+
+A deep CNN consists of multiple layers of convolution, rectification and pooling. With each pooling layer, the image is simplified and made smaller. As the CNN gets deeper, more complex features are preserved. In the first few layers, simple features such as straight edges and curves are detected while, in the deeper layers more complex patterns and shapes can be detected.
+
+\section*{Fully Connected Layers}
+The final step in a CNN is to vote on which class an image belongs to. Fully connected layers take the filtered two-dimensional outputs of the layers before them and transform them into a single list of votes.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{Figures/2_fully_connected.png}
+\decoRule
+\caption[Fully Connected Layer]{Some values are better at predicted X's than O's \parencite{convolution2}}
+\label{fig:2:fullyconnected}
+\end{figure}
+
+Some values in this list lend a greater weight to a particular class, e.g. some of the complex high-level features will be more commonly found in a car and so high values for these filters will vote favourably for the image being that of a car and maybe less in favour of a horse, for example.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=12cm]{Figures/2_final_network.png}
+\decoRule
+\caption[Convolutional Neural Network]{Fully connected layers are stacked on top of each other \parencite{convolution2}}
+\label{fig:2:finalnetwork}
+\end{figure}
+
+\section*{Backpropagation}
+While the designer of a CNN is able to choose the order in which layers are stacked, how many features in each convolution layer and the pooling window sizes, the actual values inside the feature kernels and the voting weights in the fully connected layers can not be chosen manually by the designer. Since CNNs use unsupervised learning, they are required to calculate these values themselves.
+
+Backpropagation involves fine tuning the values within the kernels for every feature and the weights in every fully connected layer. Initially, these values are chosen at random before training images with known labels are fed through the network one at a time. As each image is fed in, the error in the score for that image is recorded to determine the fit of the feature and weight values.
+
+After each iteration through the network, only one value in a feature kernel or one weight is increased and decreased slightly and the error in each case is recorded. If there is an improvement in the error, then the value of that position of the kernel or weight is either increased or decreased depending on which of the two had the lowest error. This is done for every pixel in every feature and every weight in every fully connected layer and is repeated for thousands of labelled images until the values converge to a minimum error.
+
+Provided there is a sufficient number of training images, the features and weights stabilise and the network is able to pick up on underlying trends within a class and is less sensitive to slight variations in individual images. This process of training CNNs has been the main challenge in terms of the required computing power; however, with recent advances in cloud computing and processing power, training this models is now possible over the course of a few weeks. \parencite{convolution2}

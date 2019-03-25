@@ -1,0 +1,65 @@
+\chapter{Conclusions and Recommendations}
+\label{conclusions}
+
+\section{Image Classification}
+
+\subsection{Classification Accuracy}
+Of the 100 test images, none were incorrectly classified. However, 6 of the 100 images were labelled correctly, but with scores below $70\%$. Of these 6 images, 4 held the true label of 'bin'. In general, the images of bins had a lower average score and the model is more prone to false negatives than false positives. This means that there is a higher chance of an image of a bin being wrongly labelled as background than a background image being labelled as a bin.
+
+\subsection{Error Sources in Classification}
+The model was trained using 203 images of bins and 239 background images. The key to training a classifier well is to include varied training imagery which is similar to the images on which the model will eventually be tested. In this project, the training data was collected from GSV images found on Main Road (m4) between the areas of Diep River and Rondebosch in the Cape Town Southern Suburbs area. The testing data was all obtained from images in the central business district area of the city.
+
+It is possible that there are certain patterns in the Street View imagery that differ between images in these two areas. For example, many of the bins in the training set were found on grassy street corners whereas all of the bins in the CBD were on paved corners. This remains the one area of machine learning where human judgement is essential - it is not possible for algorithms to select their own training data. However; as has been used for labelling of ImageNet data, the potential exists to outsource these tasks to online platforms such as the Amazon Mechanical Turk. 
+
+\subsection{Scope for Improvement in Classification}
+Classification accuracy could be improved in a number of ways. Additional training images would provide the model with a greater capacity for generalisation. Through extensive use, the training data set could be enlarged on a user experience basis. Whenever a user encounters a false classification, or a classification with a low score. That image can be added to the training set to add a greater variety and increase robustness of the classification.
+
+\section{Object Localisation}
+
+\subsection{Localisation Accuracy} \label{local_accuracy}
+The average error in localisation of objects was 4.6 pixels horizontally and 13.0 pixels vertically. Of the 20 images tested, 18 had horizontal errors less than 10 pixels while the largest error was 12 pixels. In the vertical component, 7 of the 20 images had errors smaller than 10 pixels while the largest error was 25 pixels.
+
+\subsection{Error Sources in Object Localisation}
+The main source of error in the localisation component is the size of the moving window used to locate objects. As with the choice of training images, the size of window is down to human judgement. The errors in the vertical component were consistently greater than those in the horizontal due to the fact that the window is taller than it is wide, thus the window stride vertically between rows is greater than the horizontal stride between columns.
+
+For the purpose of this project, the horizontal component is all that is required to obtain co-ordinates for the bin, so the larger errors in the vertical component are of no consequence. However, if the model is to be used to calculate heights for the bins, then this would need to be assessed further.
+
+\subsection{Scope for Improvement in Localisation}
+The window was chosen to be 85x55 pixels so as to fully contain bins in a rectangular dimension and orientation similar to that of the bin itself. Decreasing the window size would mean that bins found in the far distance would fill a greater portion of the window; however, this would run the risk of bins in the foreground not fitting fully within a window.
+
+One solution would be to pass the window across the image multiple times at different scales. This would achieve a greater accuracy for the position of distant bins which appear smaller and would also lower the risk of false negatives. However, this would increase processing time by a factor equal to the number of scales used by the window.
+
+\section{Positioning by Intersection}
+
+\subsection{Positioning Accuracy}
+The average positional error achieved by the final combined solution was 1.63m. Of the 20 bins, 6 had errors below 1m while 4 had errors above 2m. This level of accuracy is not sufficient for tasks such as defining property boundaries - for example - but this is more than sufficient to create auxiliary layers of map data for describing urban environments in greater spatial detail.
+
+Furthermore, most of the base features in these environments exist on a much larger scale such as the road network and buildings. This fact can be used to position the bins by inference. For example, the largest positional error of 4.88m is enough for the bin to placed in a road or within the boundary of a private property, but with knowledge of the locations and bounds of these base features, the bin can then be snapped to the nearest sidewalk. For the purpose of gaining an inventory of features such as bins or traffic signs, as well as the spatial distribution of these features throughout a city, the level of accuracy obtained in this project meets requirements.
+
+\subsection{Error Sources in Positioning}
+
+\subsubsection*{Moving Window}
+As mentioned above in section \ref{local_accuracy}, the localisation error ranged up to 12 pixels in the horizontal component. Most features found in Street View images are found at distances between 5 and 25 metres. A 12 pixel error translates to an error of 1.6875 degrees in the direction of the detected bin. This angular error has an effect of 0.74m on the position of the bin when the bin is 25m away and an effect of 0.15m when the bin is 5m away from the camera centre.
+
+\subsubsection*{GSV Location and Orientation Parameters}
+The latitude and longitude of the Street View images is given to seven decimal places. This translates to an error of 0.012m for the position of the camera centre.
+
+Additionally, the latitude and longitude of point-and-click features (the method used for finding the true position of bins) are given to six decimal places. This level of precision translates to an error of 0.12m for the true position of the bin.
+
+The heading of the camera is given to two decimal places. The effect of this angular error is negligible. For bins at a distance of 25m away, the effect of this error is only 0.004m which is insignificant when compared to the angular error of the moving window.
+
+\subsection{Scope for Improvement in Positioning}
+Although, the geographic co-ordinates of the images are given to seven decimal places, it is not known whether these values are actually true - i.e. whether the camera actually was at that exact location when the image was captured? An assessment on the accuracy of the Street View images' locations could be done by surveying some fixed points using precise surveying equipment. For example, the points on a wall could be surveyed with a laser scanner. Then, a Street View image containing this wall could be used for a photogrammetric resection to calculate the position of the camera centre. This calculated position could be compared to the position provided by the GSV API. This was not covered in the scope of this project.
+
+\section{Implications of This Research}
+The aim of this project was to develop a software application for detecting and positioning features found in urban environments using street-level images. The use of a pre-trained CNN achieved classification accuracy on par with the state of the art in image classification algorithms. The average positional accuracy of detected features was $\pm$1.63m. Positional errors arise from a combination of errors in GSV-provided location and orientation parameters, and errors in the localisation component of the positioning algorithm.
+
+This project may serve as a spatial planning tool for inventory and spatial distribution of repeating features in urban environments. It is possible to adapt this model to detect any other distinct features such as road signs, brand logos or building types - provided there is sufficient training imagery available. Furthermore, the model could be adapted to work on a mobile device, such as a cellphone, for inventory of any features of interest.
+
+Looking forward, the main areas for further investigation are as follows:
+\begin{itemize}
+    \item Investigate the accuracy of GSV location and orientation parameters using resection and precise control points.
+    \item Improve moving window algorithm to operate at multiple scales for increased accuracy in object localisation and decreased false negative classification errors.
+    \item Adapt model to operate in three dimensions for the horizontal \textbf{and} vertical positioning of features.
+    \item Train model to detect multiple classes of urban features instead of operating as a binary classifier.
+\end{itemize}

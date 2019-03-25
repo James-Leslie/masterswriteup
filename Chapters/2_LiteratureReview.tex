@@ -1,0 +1,41 @@
+\chapter{Literature Review}
+\label{lit_review} % For referencing the chapter elsewhere, use \ref{intro} 
+This chapter provides a review of all related works in the fields of recommender systems and collaborative filtering. The chapter first focuses on the background of recommender systems and the use of collaborative filtering techniques for solving item recommendation problems. This is then followed by ... Finally, the chapter is concluded by ...
+
+\section{Recommender Systems}
+As the world has become more digitally connected, people too have become connected to more and more options. When trying to decide on what movie to watch, or what album to listen to, people are presented with a vast number of options that can, oftentimes, be overwhelming. To help people in making decisions such as these, inspiration is often taken from friends' word of mouth, reviews from critics, or general surveys. Recommender systems provide an automated means for helping people discover new items. \parencite{rs_1.1_Resnick}
+
+\subsection{Approaches to recommender systems}
+Recommender systems can be divided into two broad categories. \textbf{Content based} recommender systems make use of meta data for generating recommendations. Examples of item meta data include the genre of a musical artist or song, or the director of a movie. For users, meta data such as demographic information might be used. This meta data is used to match users to items based on matching tags - a user who likes the work of a certain author will be recommended other books by that same author, or books in the same genre as what they already like. One major obstacle to content based approaches is the lack of sufficient meta data, which can be time-consuming and costly to collect. \parencite{cf_1.6_implicit}
+
+An alternative approach, known as \textbf{collaborative filtering}, uses only the interaction behaviour between users and items to make recommendations. This is the approach that will be investigated in this project.
+
+\subsection{User Feedback}
+ In most recommender systems, the inputs are provided by people (users) who rate items with which they have interacted. The function of a recommender system is to aggregate these ratings from users to make recommendations to other users on which items they might like. In some cases, ratings are provided to a recommender system explicitly by users, but in many other cases these ratings have to be inferred based on user-item interactions. 
+
+\subsubsection{Explicit Ratings}
+Explicit feedback is captured when a user makes the conscious decision to \textit{explicitly} rate an item. These ratings can be binary, e.g. like or dislike, numeric, e.g. 1-10 rating scale, or unstructured, e.g. annotated text. For example, a user can indicate that they like a certain song by giving it a "thumbs up" on a music streaming service.
+
+This type of feedback directly captures user preferences towards items; however, it can be scarce. It has also been found that the rate at which users provide explicit feedback decreases over time and, furthermore, that leaving feedback has a negative effect on user behaviour overall \parencite{cf_1.5_explicit}.
+
+\subsubsection{Implicit Feedback}
+Alternatively, the user might not explicitly rate items they like, in which case a recommender system would need to infer their preferences from their interaction history. Using the example of a music streaming service, many users do not choose to 'like' or rate songs; however, they will tend to listen to songs they like more often than those they do not. \cite{cf_1.5_explicit}, showed that there is a positive correlation between the number of 'likes' a track receives from users and its total play count. Therefore, it is a viable option to infer positive feedback from user interaction data. In addition to using hit counts as implicit feedback, browsing time is another popular interaction used to infer user preferences \parencite{rs_1.1_Resnick}.
+
+Whether the user feedback is implicit or explicit, the job of the recommender system is the same - to aggregate this feedback from users to aid others in discovering new items of interest. While it has been shown that using a combination of explicit and implicit feedback can yield improved recommendation accuracy \parencite{cf_1.4_comparison}, the subtleties around \textit{how} recommender systems aggregate user feedback are the greatest area of focus for improving accuracies.
+
+\section{Collaborative Filtering}
+The term 'collaborative filtering' (CF) was first coined in 1992, when D. Goldberg \textit{et al.} used it to refer to a system for suggesting relevant emails for a person from a selection of mailing lists. This system incorporated the reactions of other users in the filtering process. \parencite{cf_1.3_origin}
+
+Since then, the term 'collaborative filtering' has generally been used to describe a process through which known preferences of users in a group are used to predict the unknown preferences of other users \parencite{cf_1.1}. In most cases, the preferences of users within the group are indicated by a rating or score of some kind; users will assign positive ratings to items they liked, and negative ratings to items they did not. The term \textit{collaborative} refers to the fact that the users of the system improve its performance with each rating that they contribute \parencite{cf_1.2_eigentaste}, i.e., as users record more ratings of items, the ability of the system to \textit{filter} accurate recommendations for other users improves. 
+
+Collaborative filtering techniques provide an algorithmic method for making recommendations to users, based on the preferences of other similar users. The fundamental assumption that underlies CF techniques is that users who have both rated $k$ items similarly will also rate other items similarly too. For example, if user $A$ likes movies $m_1$, $m_2$, $m_3$, and user $B$ likes movies $m_1$, $m_2$, $m_3$, $m_4$, then user $A$ is also likely to enjoy movie $m_4$.
+
+One of the advantages of collaborative filtering is that it can be performed without any meta data relating to either the users or the items in the database. Whereas other predictive models make predictions for a response variable using the values of one or more predictor variables, CF models make predictions for ratings, using only other ratings.
+
+\subsection{Similarity-based CF Approaches}
+\subsubsection{User-based similarity}
+\subsubsection{Item-based similarity}
+
+\subsection{Matrix factorisation collaborative filtering}
+
+\subsection{Netflix Prize}

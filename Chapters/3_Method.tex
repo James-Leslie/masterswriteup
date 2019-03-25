@@ -1,0 +1,389 @@
+\chapter{Method}
+\label{method}
+This chapter details the steps which were taken to achieve the end result of detecting and positioning features in Google Street View. This was done in three main components which were then combined to form the final solution. The three components are (1) \textbf{image classification}, (2) \textbf{object localisation} and (3) positioning of features by \textbf{photogrammetric intersection}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{Figures/3_workflow.pdf}
+\decoRule
+\caption[Work flow]{The final solution should be capable of taking two GSV images as input and returning 2D co-ordinates for a feature of interest}
+\label{fig:method_workflow}
+\end{figure}
+
+Figure \ref{fig:method_workflow} shows the workflow of the final solution. From an input of two Google Street View images, how can the 2D co-ordinates for a common feature be calculated? To solve this, there are a few smaller issues to be tackled: (1) What features will be detected? (2) How will the locations of features in the image be obtained? (3) For the detected features, how will co-ordinates be calculated? All of these questions will be answered in the course of this chapter.
+
+\section{Image Classification}
+The first component of this research project is that which is capable of taking an input image and assigning it a label. As discussed in section \ref{ConvNets}, convolutional neural networks (CNNs) are the current state-of-the-art method for image classification.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{Figures/3_classifier.pdf}
+\decoRule
+\caption[Image Classification]{In both of the examples above, the input images are assigned the correct class labels.}
+\label{fig:classifier}
+\end{figure}
+
+\subsubsection*{Transfer Learning}
+Training of deep CNNs requires substantial computing power, with many of the top performing CNNs requiring multiple top-spec GPUs to be used over the course of multiple days to be trained. Transfer learning is a technique which allows users to shorten the training time by using a model which has already been fully trained on a set of classes - such as those in ImageNet - and then retraining this model for new classes \parencite{transfer_learning}. This is done by retraining only the final layer in the network, while leaving all other layers untouched.
+
+Using transfer learning, it is possible to retrain a deep CNN to work on a new set of classes. Furthermore this can be done on a laptop without a GPU in thirty minutes or less.
+
+\subsubsection*{Inception-v3}
+The original Inception model developed by Szegedy \textit{et al} \parencite*{convolution4} has since been improved in the Inception-v3 model which has achieved a $3.6\%$ top-5 error rate on the ILSVRC 2012 classification challenge \parencite{Inceptionv3}.
+
+The code for this model is all available online at the following Github repository:
+\url{https://github.com/tensorflow/tensorflow/tree/r1.3/tensorflow/examples/image_retraining}
+
+Before downloading the Inception-v3 model, tensorflow needs to be installed. This is done by simply opening a terminal and issuing the following command:
+
+\verb|C:\> pip3 install --upgrade tensorflow|
+
+This installs tensorflow on the user's machine. Tensorflow is compatible with either Python 3.5.x or 3.6.x.
+With tensorflow installed, the user can then clone the repository listed in the link above. With all of the Inception-v3 files cloned, it is then possible to retrain the final layer of the model to classify new classes.
+
+The Inception-v3 model has been pre-trained using the 1000 classes of the ImageNet data-set. This great variety in images, combined with the depth of the CCN itself means that it is possible to leave the lower layers of the model frozen. The network is deep enough that the features learned through training on the ImageNet data-set are numerous and varied enough to uniquely identify any new classes which the user may use when re-training the model.
+
+As an example, the 1000 classes in the ImageNet data-set include labels such as 'container ship', 'leopard', 'panda' and 'bicycle' (to name but a few arbitrary examples). The Inception-v3 model identifies each of these classes through the activations of features in each convolution layer. In an image of a bicycle, the lower layers will identify the straight edges of the frame and spokes while the later layers will find the wheels (a combination of spokes, rim and tyre) etc. When introducing new classes to the network, there are so many convolution layers which have been trained on an almost exhaustive range of classes that these new classes can still be uniquely described as combinations of the various features used to describe the 1000 other classes such as 'bicycle' and 'panda', for example.
+
+\subsection{Training Data}
+Retraining of the model requires the collection of new training data to replace the ImageNet data-set. The training data needs to be stored in the same folder as the Inception files. The file structure should be as follows:
+
+\begin{verbatim}
+MASTER/
+   [label_image.py]
+   [retrain.py]
+   CLASSES/
+      CLASS1/
+         [class1_image1.jpg]
+         [class1_image2.jpg]
+         [...]
+      CLASS2/
+         [class2_image1.jpg]
+         [class2_image2.jpg]
+         [...]
+\end{verbatim}
+
+The python file necessary for retraining the model is \verb|retrain.py| (found in the MASTER folder above). In a sub-folder (named CLASSES above), there should be as many additional sub-folders as the user wishes to have classes. Within each class's sub-folder (CLASS1, CLASS2, etc.) there should be a few hundred images so as to generalise well. When training the model, the folder names are used as the names of the classes. The names of the images themselves are not important as they will all be grouped into the same class provided they are in the correct folder.
+
+When collecting training photos, it is important to ensure that the photos are representative of what the model will eventually be tested on. If the model will be used to detect certain features in an outdoor environment, then the training photos should not be of those features indoors. It should also be noted whether the model is used to solve an "open-world" or a "closed-world" problem. For example, if the model is used to classify bird types, then it is likely that it will only be asked to classify pictures of birds. However, in applications such as self-driving cars, the classifier could encounter images of anything in the car's path and there should be a class which represents an 'unsure' area. This folder can include various images of background scenes showing none of the objects from the other classes.
+
+In this project, it was decided to train the model to detect the green rubbish bins found throughout the city of Cape Town. To do this, a total of 203 images were captured of the bins. It was important to include photos of the bins from various angles and with varying levels of lighting. Occlusions such as lamp posts or cars were also included to ensure a more generalised spread of training data. The images were all obtained using the Google Street View API. Each bin was captured from a street view image by cropping out only the section of the image which contained the bin. All images used were 55 x 85 pixels in size.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{Figures/3_training_bins.jpg}
+\decoRule
+\caption[Training Imagery]{Bins were captured at various angles in different street scenes.}
+\label{fig:training_imagery}
+\end{figure}
+
+Figure \ref{fig:training_imagery} shows a random selection of 18 of the training images. The bins were captured in a number of different locations with changing background scenery. This change between images helps the model to learn the underlying patterns within the data, i.e. everything besides the bin itself changes between images and thus the model learns that the bin object with its features is what defines this class of image.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{Figures/3_training_unknown.jpg}
+\decoRule
+\caption[Training Imagery 2]{The second class of image contains various background scenes.}
+\label{fig:training_imagery2}
+\end{figure}
+
+Since this project only seeks to identify the bins in an image, the model was thus trained as a binary classifier. For this purpose, a second folder of 'unknown' images was included such that when the model was given an image to classify, it would need to make a decision on whether or not that image contains a bin.
+
+The criteria for images labelled as 'unknown' is less specific than the bin images. The only important fact here is that there are no images of bins in the folder. The images in this class were obtained in the same way as the images of the bins. Portions of Street View images which did not contain bins were cropped and saved in the 'unknown' folder. Essentially, this folder just consists of noise to group and classify any images which are not easily identifiable as bins.
+
+\subsection{Training}
+With all of the training data grouped into the necessary sub-folders, the Inception-v3 model can be re-trained. During training, the values in the final layer are reset at random and calculated through the process of backpropagation. Training is done by issuing a terminal command to run the \verb|retrain.py| file.
+
+\subsubsection*{Hyperparameters}
+There are a few hyperparameters which may be adjusted before training. The number of \textbf{training steps} determines how many times the model will backpropagate a set of 10 random images to calculate final layer weights. The \textbf{batch size} may also be adjusted to change the number of images used at each training set - this is set to 10 by default. Finally, the \textbf{learning rate} adjusts the magnitude of the updates to the weights in the final layer between iterations. These three hyperparameters are all linked and adjusting any one individually can be complimented by adjusting the other two accordingly.
+
+\subsubsection*{Visualising the Training Process}
+The training process can be viewed using the TensorBoard graphical output and this can provide users with extra insight into which hyperparameters need adjusting. During training, the model will record values for accuracy and cross entropy. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{Figures/3_training_accuracy.jpg}
+\decoRule
+\caption[Training Accuracy]{Training accuracy (y-axis) increases as training steps (x-axis) increase.}
+\label{fig:training_accuracy}
+\end{figure}
+
+At each training step, the labels assigned to the 10 images in the batch are compared to the true labels to calculate the accuracy. In this case, accuracy achieved during training was above $96\%$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=13cm]{Figures/3_training_crossentropy.jpg}
+\decoRule
+\caption[Training Cross Entropy]{Cross entropy (y-axis) decreases as training steps (x-axis) increase.}
+\label{fig:cross_entropy}
+\end{figure}
+
+Cross entropy is a function which gives an idea of how well the learning is progressing. Over time this value should decrease. From the two figures, \ref{fig:training_accuracy} and \ref{fig:cross_entropy}, it can be seen that for the purpose of this project, once the model has been trained for about 200 steps, training accuracy and cross entropy start to settle and the improvements between successive steps become smaller and smaller.
+
+\subsection{Testing}
+As a check, the model can be tested using new input data which was not included in the training set. This should always be done to ensure the model did not simply memorise the training set. This is done using another terminal command to run the \verb|label_image.py| file on any user-specified image. Below are some examples of the test images:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{Figures/3_testing_images.jpg}
+\decoRule
+\caption[Testing Images]{Examples of the images used to test the trained model}
+\label{fig:testing_images}
+\end{figure}
+
+The model was tested on segments of images obtained directly from the Google Street View API. In figure \ref{fig:testing_images}, the 9 images on the left are clearly all bins and should be labelled as such by the classifier. The 9 on the right are typical background parts to an image, i.e. all the parts of an image which would be classified as 'unknown'.
+
+When feeding these images to the model, the following results were obtained:
+
+\begin{table}[!ht]
+\parbox{.45\linewidth}{
+\centering
+\caption[Bin Image Testing]{Bin scores}
+\label{tab:bin_test}
+\begin{tabular}{c c c}
+\toprule
+\tabhead{Image No.} & \tabhead{Label} & \tabhead{Score}\\
+\midrule
+1 & bin & 0.96508\\
+2 & bin & 0.97294\\
+3 & bin & 0.99661\\
+4 & bin & 0.97101\\
+5 & bin & 0.98043\\
+6 & bin & 0.99345\\
+7 & bin & 0.94858\\
+8 & bin & 0.99850\\
+9 & bin & 0.94176\\
+\bottomrule\\
+\end{tabular}
+}
+\hfill
+\parbox{.45\linewidth}{
+\centering
+\caption[Unknown Image Testing]{'Unknown' scores}
+\label{tab:unknown_test}
+\begin{tabular}{c c c}
+\toprule
+\tabhead{Image No.} & \tabhead{Label} & \tabhead{Score}\\
+\midrule
+1 & unknown & 0.81005\\
+2 & unknown & 0.97796\\
+3 & unknown & 0.52139\\
+4 & unknown & 0.97640\\
+5 & unknown & 0.96005\\
+6 & unknown & 0.91855\\
+7 & unknown & 0.92556\\
+8 & unknown & 0.87287\\
+9 & unknown & 0.82143\\
+\bottomrule\\
+\end{tabular}
+}
+\end{table}
+
+Tables \ref{tab:bin_test} and \ref{tab:unknown_test} above show the test scores for the images in Figure \ref{fig:testing_images}. All of the bins were correctly labelled, i.e. no false negatives, with scores all above $94\%$ while the other images all received scores in favour of the unknown label. In general, the unknown images received lower scores in favour of their true label. This is of minor concern in this project since these scores are not low enough to result in a false positive.
+
+\section{Object Localisation}
+The second component of this project requires adaptation of the first. Rather than simply label an image as either 'bin' or 'unknown', the desired outcome is to take a larger input image and detect \textbf{where} in that image a bin may be found.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{Figures/3_localisation.pdf}
+\decoRule
+\caption[Object Localisation]{Localisation involves finding the part of the image where the object appears.}
+\label{fig:localisation}
+\end{figure}
+
+Essentially, the larger image needs to be split up into smaller regions. The trained model then needs to be run on each of these regions to test for the presence of a bin.
+
+\subsection{Moving Window} \label{moving_window}
+The method chosen for this project is to use a moving window, similar to that used by Lintern \parencite*{ref2.3}. This method involves moving a window of a certain size across the entire image in a way that covers the entire image with enough overlap between each successive stride of the window. In this way, the image is being divided into many different sub-images, each the size of the window itself.
+
+The Python Image Library contains all of the tools necessary to slice the image into its smaller window-sized regions. The algorithm works in the following way:
+
+\begin{enumerate}
+    \item Select window size (height and width in pixels)
+    \item Calculate number of windows horizontally and vertically, i.e. how many rows and columns
+    \item Use nested loop to divide image up row by row and column by column
+\end{enumerate}
+
+\subsubsection{Step 1. Window Size}
+Choosing the window size required some manual user sampling of Street View images. The images obtained from the API are all 640x640 pixels in size. The sampling involved manually cropping the part of an image containing a bin for a few bins at different distances in the image. The size chosen gave preference to bins found in close proximity to the street car since these parts of the image have a higher resolution than those parts further away from the car. Those bins which would not fill up this window size would be captured in imagery where the car is nearer to them.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{Figures/3_window_size.pdf}
+\decoRule
+\caption[Sliding Window Size]{Window size was chosen based on size of bins in GSV images.}
+\label{fig:window}
+\end{figure}
+
+The window needs to be large enough so that all bins are fully contained. The training data included many images of bins in natural environments so the extra scenery around the fringes is not problematic for the model to accommodate. Bins further away will still fit in the window and those which are in the distance will be detected in other images captured closer to those bins.
+
+Taking all of the above reasons into consideration, a window size of 55 x 85 was chosen.
+
+\subsubsection{Step 2. Calculate Number of Rows and Columns}
+With the window size chosen, the image needs to be divided up to simulate the window moving in search of the bins. In each row, the window is shifted by one full width until reaching the edge of the image. At this point, there will be a small amount of space remaining at the edge. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{Figures/3_slicing1.pdf}
+\decoRule
+\caption[Sliding Window 1]{Windows stacked side by side for coverage}
+\label{fig:slicing1}
+\end{figure}
+
+The windows are then spread evenly to cover the image from edge to edge before infill windows are added to cover the spaces in between each window.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=10cm]{Figures/3_slicing2.pdf}
+\decoRule
+\caption[Sliding Window 2]{Windows are then spaced evenly, with infill windows added to ensure overlap}
+\label{fig:slicing2}
+\end{figure}
+
+This same approach is used to calculate the number of rows. The formulae used to calculate the number of rows and columns are listed below:
+
+\begin{equation}
+    \verb|n = int(img_ht/wnd_ht) * 2 + 1| 
+\end{equation}
+
+\begin{equation}
+    \verb|m = int(img_wd/wnd_wd) * 2 + 1| 
+\end{equation}
+
+\hspace{15pt} where n and m are the number of rows and columns respectively.
+
+This method ensures coverage of the entire image using the moving window while also guaranteeing overlap so that if a feature is contained in only half of one window, it will be contained entirely in the next.
+
+\subsubsection{Step 3. Divide Image by Rows and Columns}
+The final step was to write an algorithm to slice the image in the pattern of the moving window. This was done using a nested loop, iterating row-by-row and column-by-column. The Python code for this loop is shown in Appendix \ref{slicing}.
+
+The algorithm simulates the window moving across the image row by row, and within each row the image is sliced column by column. Every second iteration, the window overlaps its adjacent neighbours as shown by the green boxes in Figure \ref{fig:slicing2}.
+
+At each placement of the window, the centre point of that window needs to be calculated. If a window is found to contain a bin, then the location of that bin will be taken as the centre point of the window since the bins will be represented as point features on a map.
+
+\subsubsection*{Multiple Detections}
+The moving window algorithm was designed to ensure overlap between successive strides of the window. This was done so that a window would always fully contain a given bin at least once. A side effect of this overlap is that the same bin is likely to occur in multiple windows.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{Figures/3_multi_window.pdf}
+    \caption[Multiple Detections]{Same bin is detected three times in same image.}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{Figures/3_multi_window2.pdf}
+    \caption[Refined Window Position]{The three windows are refined into one.}
+  \end{minipage}
+\end{figure}
+
+Rather than being a hindrance, the multiple detections of a bin were used to refine the image co-ordinates of the bin's centre. Instead of using the mid-point of one window, in cases where the same bin was detected in two or more adjacent windows, a weighted mean of the window centres was chosen to be the centre of the bin. The weighting parameter of these windows was the classification score of that window.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=11cm]{Figures/3_weighted_mean.pdf}
+\decoRule
+\caption[Weighted Mean]{Multiple detections of the same bin used to refine the image location. The classification scores (below) are used to calculate a weighted average of the window centres (above).}
+\label{fig:multiple_detections}
+\end{figure}
+
+\section{Calculating Co-ordinates}
+The third and final component of this project is the photogrammetric intersection. This component is used to obtain co-ordinates of the bins which have been detected in the Street View images.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=9cm]{Figures/3_intersection.pdf}
+\decoRule
+\caption[Photogrammetric Intersection]{Bin co-ordinates ($X, Y$) are obtained using cameras' position ($\phi, \lambda$) and heading (h)}
+\label{fig:intersection2}
+\end{figure}
+
+Figure \ref{fig:intersection2} shows the geometry of the problem. The co-ordinates of the bin need to be calculated using the known camera parameters given by GSV and the observed image co-ordinates of the bin. The formulae for an intersection are given below:
+
+\begin{equation}\label{eq:intersection1}
+    X_B = X_1 + \dfrac{(Y_2 - Y_1) - (X_2 - X_1)\tan{t_{1B}}}{\tan{t_{1B}} - \tan{t_{2B}}}
+\end{equation}
+\begin{equation}\label{eq:intersection2}
+    Y_B = Y_1 + (X_B - X_1)\tan{t_{1B}}
+\end{equation}
+
+\begin{quote}
+    where $X_1, X_2, X_B, Y_1, Y_2, Y_B$ are the X and Y co-ordinates of the two cameras and the bin.
+    and $t_{1B}$ is a direction from camera 1 to the bin.
+\end{quote}
+
+Since the co-ordinates of the Street View images are given as geographic co-ordinates ($\phi, \lambda$), these need to be converted to Cartesian co-ordinates (X, Y) before they can be used in the equations listed above. For all conversions from geographic to Cartesian co-ordinates, the python file \verb|gauss_conformal.py| was used. GSV-provided latitude and longitude are given for the WGS84 reference ellipsoid. The module for converting to Cartesian co-ordinates uses the following transformation parameters:
+
+\begin{equation}
+    a = 6378137.0 \nonumber
+\end{equation}
+\vspace{2px}
+\begin{equation}
+    b = 6356752.314 \nonumber
+\end{equation}
+\vspace{2px}
+\begin{equation}
+    e = \sqrt{\dfrac{a^2 - b^2}{a^2}} \nonumber
+\end{equation}
+\vspace{2px}
+\begin{equation}
+    e' = \sqrt{\dfrac{a^2 - b^2}{b^2}} \nonumber
+\end{equation}
+\vspace{2px}
+\begin{equation}
+    N = \dfrac{a - b}{a + b} \nonumber
+\end{equation}
+\vspace{2px}
+\begin{equation}
+    G = (\dfrac{a}{1 + N})(1 + \dfrac{N^2}{4} + \dfrac{N^4}{64}) \nonumber
+\end{equation}
+
+\begin{quote}
+    where $a$ and $b$ are the semi-major and semi-minor axes respectively.
+\end{quote}
+
+The Python code for transforming from geographical to Cartesian co-ordinates is shown in Appendix \ref{intersection}.
+
+The Guass conformal transformation provides the values of $X_1,  X_2, Y_1,$ and $Y_2$ needed for Equation \ref{eq:intersection1} and Equation \ref{eq:intersection2}. The next step was to calculate values for the bin directions, i.e. the directions from each camera to the common bin ($t_{1B}$ and $t_{2B}$). 
+
+Using the GSV-provided camera heading parameter would make the false assumption that bins always appear at the centre of an image. It is possible for the bins to be found in any part of the image. This fact needs to be accounted for when intersecting the bin's position. Since the image resolution and field of view are both known, an equation can be formulated to calculate bin direction as a function of these two parameters.
+
+The field of view (FOV) is a GSV-provided parameter which could be used to obtain a heading for the bin. In this project, all images obtained from the GSV API have the FOV set to the default of $90^o$. FOV is the angle formed at the camera centre by the two vertical planes at the far extremes of the image.
+
+The resolution of the image is 640 x 640 pixels, with the centre pixel's image co-ordinates being (0, 0). Thus the largest possible x co-ordinate is $\pm360$. Figure \ref{fig:bin_direction} provides a graphical representation of the geometry of the GSV images.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=11cm]{Figures/3_intersection2.pdf}
+\decoRule
+\caption[Calculating Direction to Bin]{With FOV, image size, and observed image co-ordinates, the direction to each bin can be calculated.}
+\label{fig:bin_direction}
+\end{figure}
+
+Points at the far edges of the image will have a direction $\pm45^o$ different to the camera heading. The bin's direction is calculated by converting the x image co-ordinate value, ranging between -320px and +320px, to a direction between $-45^o$ and $+45^o$ using the following formula:
+
+\begin{equation}
+    t_{1B} = h_1 + \arctan{x_1/320}
+\end{equation}
+
+It should be noted that this method requires that pitch and roll of the camera are both set to zero. Pitch is a user-requested parameter, chosen when retrieving images from the GSV API. Roll of the camera is assumed to be zero since the imaging units are stabilised on board the mobile mapping system. With pitch and roll set to zero, the effect of changing the x image co-ordinate translates directly into a change in bin direction.
+
+At this point, all of the variables needed in equations \ref{eq:intersection1} and \ref{eq:intersection2} have been calculated and the co-ordinates of the bin can be calculated. The Python code for performing this series of calculations, as well as all helper methods, is shown in Appendix \ref{intersection}.
+
+
+
+\section{Combined Solution}
+The final step is to combine the three components to achieve the main project objective. The components should be capable of combining in such a way that when given one pair of input images from GSV, the location of a bin within that image pair can be obtained.
+
+The combined solution uses all modules of code shown in Appendix \ref{AppendixB} in the following way:
+
+\begin{enumerate}
+    \item load two adjacent GSV images
+    \item use moving window algorithm to slice image into 273 separate sub-images
+    \item classify each sub-image to check for presence of bin
+    \item if a bin is found in both images of a GSV pair, perform intersection using centre points of the two bounding boxes to obtain real-world co-ordinates
+\end{enumerate}
+
+The results of this combined solution will be discussed in detail in the next chapter.
+
