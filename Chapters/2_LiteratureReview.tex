@@ -1,68 +1,67 @@
 \chapter{Literature Review}
 \label{lit_review} % For referencing the chapter elsewhere, use \ref{intro} 
-This chapter provides a review of all related works in the field of recommender systems. The chapter first focuses on the background and origin of recommender systems and outlines their main applications. This is then followed by an overview of the methods used to evaluated the accuracy and effectiveness of recommender systems. Then, the two main categories of approaches to recommender systems are discussed, namely \textit{content-based} and \textit{collaborative filtering} systems. Finally, the chapter is concluded by evaluating the top submissions to the Netflix Prize, a contest that held in 2008, which was a major event in the progression of collaborative filtering algorithms.
+This chapter provides a review of all related works in the field of recommender systems. The chapter first focuses on the background and origin of recommender systems and outlines their main applications. This is then followed by an overview of the methods used to evaluated the accuracy and effectiveness of recommender systems. Then, the two main categories of approaches to recommender systems are discussed, namely \textit{content-based} and \textit{collaborative filtering} systems. Finally, the chapter is concluded by evaluating the top submissions to the Netflix Prize, a contest that was held in 2008, which was a major event in the progression of collaborative filtering algorithms.
 
 \section{Introduction to Recommender Systems}
-As the world has become more digitally connected, people too have become connected to an increasing number of options. When trying to decide on what movie to watch, or what album to listen to, people are presented with a vast number of options that can, oftentimes, be overwhelming. To help people in making decisions such as these, inspiration is often taken from friends' word of mouth, reviews from critics, or general surveys. Recommender systems provide an automated means for helping people discover new items. \parencite{rs_1.1_Resnick}
+As the world has become more digitally connected, people too have become connected to an increasing number of options. When trying to decide on what movie to watch, or what album to listen to, people are presented with a vast number of options that can, oftentimes, be overwhelming. To help people in making decisions such as these, inspiration is often taken from friends' word of mouth, reviews from critics, or general surveys. Recommender systems provide an automated means for helping people discover new items \parencite{rs_1.1_Resnick}.
 
 The goal of a recommender system can be defined as predicting the response of a user for new items, based on historical information, and suggesting novel and/or original items for which the estimated response is positive \parencite{handbook_1.4_neighbourhood}.
 
 \subsection*{Approaches to Recommender Systems}
-Recommender systems can be divided into two broad categories. \textbf{Content based} recommender systems make use of meta data for generating recommendations. Examples of item meta data include the genre of a musical artist or song, or the director of a movie. For users, meta data such as demographic information might be used. This meta data is used to match users to items based on matching tags - a user who likes the work of a certain author will be recommended other books by that same author, or books in the same genre as what they already like. \parencite{di2012linked}
+Recommender systems can be divided into two broad categories. \textbf{Content-based} recommender systems make use of meta data for generating recommendations. Examples of item meta data include the genre of a musical artist or song, or the director of a movie. For users, meta data such as demographic information might be used. This meta data is used to match users to items based on matching tags - the recommendations for a user who likes work of a certain author, for example, might include other books by the same author or books of the same genre \parencite{di2012linked}.
 
-There have been a number of successful content based recommender systems. Many web recommenders use a keyword-based technique, to match web pages based on the frequency of words on the page. In movie and book recommenders, a common approach is to use similarities between the text descriptions to match products. \parencite{handbook_1.3_content-based}
+There have been a number of successful content-based recommender systems. Many web recommenders use a keyword-based technique to match web pages based on the frequency of words on the page. In movie and book recommenders, a common approach is to use similarities between the text descriptions to match products. \parencite{handbook_1.3_content-based}
 
-One major obstacle to content based approaches is the lack of sufficient meta data, which can be time-consuming and costly to collect. \parencite{cf_1.6_implicit}
+One major obstacle to content-based approaches is the lack of sufficient meta data, which can be time-consuming and costly to collect. \parencite{cf_1.6_implicit}
 
-An alternative approach, known as \textbf{collaborative filtering} (CF), uses only the historical interaction behaviour between users and items to make recommendations \parencite{cf_1.1}. This is the approach that will be investigated in this project.
+An alternative approach, known as \textbf{collaborative filtering} (CF), uses only the historical interaction behaviour between users and items to make recommendations \parencite{cf_1.1}. This is the approach that will be investigated in this project and will be described in more detail below.
 
 \section{Evaluating Recommender Systems}
-Before expanding on the intricacies of collaborative filtering, it is first necessary to discuss the methods and metrics that are commonly used to evaluate recommender systems. This is the most subjective aspect of the process, since the success of the system depends on the objectives of its designer. For example, the intent could be to stretch customer spend, or it could be to encourage users to discover new products. In each of these cases, success would be measured using different yard sticks. \parencite{eval_colab}
+Before expanding on the intricacies of collaborative filtering, it is first necessary to discuss the methods and metrics that are commonly used to evaluate recommender systems. This is the most subjective aspect of the process, since the success of the system depends on the objectives of its designer. For example, the intent could be to stretch customer spend, or it could be to encourage users to discover new products. In each of these cases, success would be measured using different yard sticks \parencite{eval_colab}.
 
-There are three main approaches for evaluating the success of a recommender system. The first approach is to evaluate the system offline, without any form of user testing. The other two approaches involve user testing; either using small groups of subject matter experts, or a more large-scale scale approach using online user testing. While each recommender system can be evaluated subjectively based on its ability to meet certain outcomes, there are certain measurable properties which can be used to compare different systems. \parencite{handbook_1.8_evaluation} The intended outcomes of the recommender system will determine whether it can be evaluated offline, or if it will require expert or user group online testing.
+There are three main approaches for evaluating the success of a recommender system. The first approach is to evaluate the system offline, without any form of user testing. The other two approaches involve user testing; either using small groups of subject matter experts, or a more large-scale approach using online user testing. While each recommender system can be evaluated subjectively based on its ability to meet certain outcomes, there are certain measurable properties which can be used to compare different systems \parencite{handbook_1.8_evaluation}. The intended outcomes of the recommender system will determine whether it can be evaluated offline, or if it will require expert or user group online testing.
 
 \subsection{Offline Evaluation}
-Most recommender systems are scored and assessed on their ability to predict user ratings. In this case, the models have been trained to predict the numeric values of ratings that users will assign to items. The predicted values can be compared to the true ratings using common regression metrics such as mean absolute error (MAE) or root mean square error (RMSE). \parencite{eval_coverage} If we use $P$ and $O$ to denote the ordered sets of predicted and observed user rating respectively, and $n$ to represent the total number of user-item interactions, then the accuracy of the recommender system can be calculated as follows:
+Most recommender systems are scored and assessed on their ability to predict known user ratings. In this case, the models have been trained to predict the numeric values of ratings that users will assign to items. The predicted values can be compared to the true ratings using common regression metrics such as mean absolute error (MAE) or root mean square error (RMSE) \parencite{eval_coverage}. If we use $P$ and $O$ to denote the ordered sets of predicted and observed user ratings respectively, and $n$ to represent the total number of user-item interactions, then the accuracy of the recommender system can be measured as
 
 \begin{equation}
-    MAE = \dfrac{|P - O|}{n}
+    \text{MAE} = \dfrac{|P - O|}{n}
 \end{equation}
-
+or
 \begin{equation}
-    RMSE = \sqrt{\dfrac{(P - O)^{2}}{n}}
+    \text{RMSE} = \sqrt{\dfrac{(P - O)^{2}}{n}}.
 \end{equation}
 
-However, there are alternative metrics which have been formulated that aim to better reflect the quality perceived by users of the system \parencite{eval_colab}.
+However, there are alternative metrics that aim to better reflect the quality perceived by users of the system \parencite{eval_colab}.
 
-Prediction \textbf{coverage} provides a measure of how well the recommender system is able to encourage users to explore all of the item space. If $I$ is used to denote all items available to users and $I_p$ to denote all items recommended by the recommender system, then coverage can be calculated as follows:
+Prediction \textbf{coverage} provides a measure of how well the recommender system is able to encourage users to explore all of the item space. If $I$ is used to denote all items available to users and $I_p$ to denote all items recommended by the recommender system, then coverage can be measured as
 
 \begin{equation} \label{eqn:cov}
-    coverage = \dfrac{|I_p|}{|I|}
+    \text{coverage} = \dfrac{|I_p|}{|I|},
 \end{equation}
-\hspace{2em} which is the total number of items recommended by the system divided by the total number of items contained in the training data \parencite{eval_coverage}.
+which is the total number of items recommended by the system divided by the total number of items contained in the training data \parencite{eval_coverage}.
 
 In some cases, a recommender system could achieve high levels of both accuracy and coverage, but still struggle to recommend new items to users. \cite{eval_colab} used the example of a recommender system that suggests bananas to shoppers in a grocery store: \textit{"Statistically, this recommendation is highly accurate: almost everyone buys bananas. However, everyone who comes to a grocery store to shop has bought bananas in the past, and knows whether or not they want to purchase more. Further, grocery store managers already know that bananas are popular, and have already organised their store so people cannot avoid going past the bananas."} 
 
 It should be noted, however, that a recommender system should not \textit{only} recommend unexpected items. As \cite{swearingen2001beyondalgorithms} showed, non-novel recommendations help to develop trust from users in the system and should be combined with more unexpected suggestions to provide an enjoyable overall user experience.
 
-\textbf{Serendipity} is a metric that has been used to assess both a recommendation's unexpectedness \textbgf{and} its usefulness \parencite{online_predicting}.
+\textbf{Serendipity} is a metric that has been used to assess both a recommendation's unexpectedness \textbf{and} its usefulness \parencite{online_predicting}. Serendipity is more of a conceptual evaluative measure, rather than a fixed formula like RMSE. One approach to capture serendipity numerically has been suggested by \parencite{eval_colab}. In the case where a recommender can produce expected probabilities for a given user for every item in the system, fir example, one could divide each probability by the average user probability score to produce re-weighted scores. The resulting probabilities would represent a measure of how much more likely a given user is to like items than the average user.
 
-Serendipity is more of a conceptual evaluative measure, rather than a fixed formula like RMSE. One suggested approach to capture serendipity numerically has been suggested by \parencite{eval_colab}. In the case where a recommender can produce expected probabilities for a given user for every item in the system, one could divide each probability by the average user probability score to produce re-weighted scores. The resulting probabilities would represent a measure of how much more likely a given user is to like items than the average user.
-
-In the case where ratings are not available - that is when only a list of user-item interactions is given - the task of providing recommendations is often transformed into one of providing a set number of items to a user. Using the $P$ to denote the items that are suggested to the user and $O$ to denote items which the user was observed to have preferred, this type of approach can then be evaluated using \textbf{precision} and \textbf{recall} as follows: \parencite{handbook_1.4_neighbourhood}
+In the case where ratings are not available -- that is when only a list of user-item interactions is given -- the task of providing recommendations is often transformed into one of providing a set number of items to a user. Using $P$ to denote the set of items that are suggested to the user and $O$ to denote items which the user was observed to have preferred, this type of approach can then be evaluated using \textbf{precision} and \textbf{recall}, computed as
 
 \begin{equation}
-    precision = \dfrac{(P + O)}{P}
+    \text{precision} = \dfrac{|P \cup O|}{|P|}
 \end{equation}
-
+and
 \begin{equation}
-    recall = \dfrac{(P + O)}{O}
+    \text{recall} = \dfrac{|P \cup O|}{|O|}
 \end{equation}
+\parencite{handbook_1.4_neighbourhood}.
 
 \subsection{Online Testing}
-Testing recommender systems in an online manner, be it user studies or large-scale trials, requires a large enough audience that can be split into test and control groups. Ideally, the two user groups would be identical apart from the fact that the test group would receive suggestions from the recommender system, while the control group would not. The two groups would then be assessed on their behaviour over a trial period, allowing for the recommender system to be assessed in various areas such as uplift in incremental sales or exploration of the item space. \parencite{online_predicting}
+Testing recommender systems in an online manner, be it user studies or large-scale trials, requires a large enough audience that can be split into test and control groups. Ideally, the two user groups would be identical apart from the fact that the test group would receive suggestions from the recommender system, while the control group would not. The two groups would then be assessed on their behaviour over a trial period, allowing for the recommender system to be assessed in various areas such as uplift in incremental sales or exploration of the item space \parencite{online_predicting}.
 
-An example of online testing can be found in the work done by \cite{swearingen2001beyondalgorithms}, where users were asked to evaluate a number of internet recommender systems and compare their suggestions to those of their friends'. Users were asked to classify which recommendations they received were good, and then to further distinguish between \textbf{useful} recommendations they had never seen before and \textbf{previously liked} recommendations. One particularly interesting observation from this study was that recommender systems tended to produce more suggestions of completely new items than friends, who tended to recommend items of which users were already aware.
+An example of online testing can be found in the work done by \cite{swearingen2001beyondalgorithms}, where users were asked to evaluate a number of internet recommender systems and compare their suggestions to those of their friends. Users were asked to classify which recommendations they received were good, and then to further distinguish between \textbf{useful} recommendations they had never seen before and \textbf{previously liked} recommendations. One particularly interesting observation from this study was that recommender systems tended to produce more suggestions of completely new items than friends, who tended to recommend items of which users were already aware.
 
 The advantage of testing recommender systems in this way is that it affords the systems the chance to influence users' interaction behaviour, which is essentially the ultimate goal. Recommender systems exist for the main purpose of suggesting items to users that they are predicted to like, but would otherwise not have known about. The influence of a recommender system cannot be assessed through back-testing, it can only be done through online trials. \parencite{handbook_1.4_neighbourhood}
 
@@ -102,7 +101,7 @@ One of the advantages of collaborative filtering is that it can be performed wit
  In collaborative filtering recommender systems, the inputs are provided by people (users) who rate items with which they have interacted. The function of a recommender system is to aggregate these ratings from users to make recommendations to other users on which items they might like. In some cases, ratings are provided to a recommender system explicitly by users, but in many other cases these ratings have to be inferred based on user-item interactions. 
 
 \subsubsection{Explicit Ratings}
-Explicit feedback is captured when a user makes the conscious decision to \textit{explicitly} rate an item. These ratings can be binary, e.g. like or dislike, numeric, e.g. 1-10 rating scale, or unstructured, e.g. annotated text. For example, a user can indicate that they like a certain song by giving it a "thumbs up" on a music streaming service.
+Explicit feedback is captured when a user makes the conscious decision to \textit{explicitly} rate an item. These ratings can be binary (e.g.\ like or dislike), numeric (e.g.\ 1-10 rating scale) or unstructured (e.g.\ annotated text). For example, a user can indicate that they like a certain song by giving it a "thumbs up" on a music streaming service.
 
 This type of feedback directly captures user preferences towards items; however, it can be scarce. It has also been found that the rate at which users provide explicit feedback decreases over time and, furthermore, that leaving feedback has a negative effect on user behaviour overall \parencite{cf_1.5_explicit}.
 
