@@ -97,6 +97,10 @@ Collaborative filtering techniques provide an algorithmic method for making reco
 
 One of the advantages of collaborative filtering is that it can be performed without any meta data relating to either the users or the items in the database. Whereas other predictive models make predictions for a response variable using the values of one or more predictor variables, CF models make predictions for ratings using only other ratings \parencite{handbook_1.1_intro}.
 
+One issue with content-based approaches is their limited capacity to recommend novel, unexpected items. The system will recommend items which match highly to a user's known preferences, i.e. they are limited by the user's tendency for exploration. \parencite{handbook_1.3_content-based}
+
+Collaborative-filtering-based models, on the other hand, leverage the collective experiences of all users to recommend interesting new items to users. In contrast to content-based models, models that employ collaborative filtering are known to produce serendipitous recommendations that users would not typically expect \parencite{herlocker2002empirical}.
+
 \subsection{User Feedback}
  In collaborative filtering recommender systems, the inputs are provided by people (users) who rate items with which they have interacted \parencite{cf_1.5_explicit}. The function of a recommender system is to aggregate these ratings from users to make recommendations to other users on which items they might like. In some cases, ratings are provided to a recommender system explicitly by users, but in many other cases these ratings have to be inferred based on user-item interactions \parencite{cf_1.6_implicit}. 
 
@@ -121,15 +125,25 @@ Whether the user feedback is implicit or explicit, the job of the recommender sy
 \subsection{Neighbourhood-based Recommender Models}
 There are two main techniques used in collaborative filtering recommender systems: \textit{neighbourhood-based} and \textit{latent factor} models \parencite{handbook_1.5_cf}. As the name suggests, neighbourhood models employ a nearest-neighbours approach to recommending items to users.
 
-One issue with content-based approaches is their limited capacity to recommend novel, unexpected items. The system will recommend items which match highly to a user's known preferences, i.e. they are limited by the user's tendency for exploration. \parencite{handbook_1.3_content-based}
+Neighbourhood-based approaches were some of the most prevalent in the early years of recommender systems at the end of the 90s. These methods make use of similarity measures to select subsets -- or neighbourhoods -- of users or items \parencite{cf_1.6_implicit}. These neighbourhoods are used to produce weighted average ratings to generate predictions for users \parencite{herlocker1999algorithmic}.
 
-Neighbourhood-based models, on the other hand, leverage the collective experiences of all users to recommend interesting new items to users. The principle idea is that two users will rate a particular item similarly if they have rated other items similarly too. Therefore, the weakness of content-based models is the strength of collaborative filtering models, since the user group will inevitably cover more of the item space as a whole than each person individually.
-
-Section 3 of \parencite{cf_1.6_implicit} has some stuff on neighbourhood models.
-
-
+Here's a good reference: \parencite{herlocker2002empirical}
 
 \subsubsection{User-based similarity}
+The first types of neighbourhood models estimated unknown ratings using a user-oriented approach in which predictions were based on the known ratings of like-minded users \parencite{cf_1.6_implicit}.
+
+To make a prediction for a given user $a$ for item $i$, the first step is to measure their similarities to all other users of the system. Similarity between users $a$ and $u$ can be calculated using the Pearson correlation coefficient, computed as
+\begin{equation}
+    w_{a,u} = \dfrac{\sum\limits_{i=1}^{m}[(r_{a,i}-\bar{r}_a)(r_{u,i}-\bar{r}_u)]}{\sqrt{\sum\limits_{i=1}^{m}(r_{a,i}-\bar{r}_a)^2\sum\limits_{i=1}^{m}(r_{u,i}-\bar{r}_u)^2}}
+\end{equation}
+where $r_{a,i}$ is the rating for the active user $a$ of item $i$ and $\bar{r}_a$ is their average rating, while $m$ is the set of items covered by either user.
+
+This similarity can then be used to predict the rating for the active user for item $i$
+\begin{equation}
+    P_{a,i} = \bar{r}_a + \dfrac{\sum\limits_{u=1}^{n}[(r_{u,i}-\bar{r}_u)*w_{a,u}]}{\sum\limits_{u=1}^{n}w_{a,u}}
+\end{equation}
+where $n$ is the number of neighbours used \parencite{herlocker2002empirical}.
+
 \subsubsection{Item-based similarity}
 
 \subsection{Latent Factor Recommender Models}
