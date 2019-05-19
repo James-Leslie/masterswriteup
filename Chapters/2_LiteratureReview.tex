@@ -132,20 +132,40 @@ Here's a good reference: \parencite{herlocker2002empirical}
 \subsubsection{User-based similarity}
 The first types of neighbourhood models estimated unknown ratings using a user-oriented approach in which predictions were based on the known ratings of like-minded users \parencite{cf_1.6_implicit}.
 
-To make a prediction for a given user $a$ for item $i$, the first step is to measure their similarities to all other users of the system. Similarity between users $a$ and $u$ can be calculated using the Pearson correlation coefficient, computed as
+To make a prediction for a given user $a$ for item $i$, the first step is to measure their similarities to all other users of the system. Similarity between users $a$ and $u$ can be calculated using the Pearson correlation coefficient, $w_{a,u}$, computed as
 \begin{equation}
-    w_{a,u} = \dfrac{\sum\limits_{i=1}^{m}[(r_{a,i}-\bar{r}_a)(r_{u,i}-\bar{r}_u)]}{\sqrt{\sum\limits_{i=1}^{m}(r_{a,i}-\bar{r}_a)^2\sum\limits_{i=1}^{m}(r_{u,i}-\bar{r}_u)^2}}
+    w_{a,u} = \dfrac{\sum\limits_{i=1}^{m}[(r_{a,i}-\bar{r}_a)(r_{u,i}-\bar{r}_u)]}{\sqrt{\sum\limits_{i=1}^{m}(r_{a,i}-\bar{r}_a)^2\sum\limits_{i=1}^{m}(r_{u,i}-\bar{r}_u)^2}},
 \end{equation}
 where $r_{a,i}$ is the rating for the active user $a$ of item $i$ and $\bar{r}_a$ is their average rating, while $m$ is the set of items covered by either user.
 
 This similarity can then be used to predict the rating for the active user for item $i$
 \begin{equation}
-    P_{a,i} = \bar{r}_a + \dfrac{\sum\limits_{u=1}^{n}[(r_{u,i}-\bar{r}_u)*w_{a,u}]}{\sum\limits_{u=1}^{n}w_{a,u}}
+    P_{a,i} = \bar{r}_a + \dfrac{\sum\limits_{u=1}^{n}[(r_{u,i}-\bar{r}_u)*w_{a,u}]}{\sum\limits_{u=1}^{n}w_{a,u}},
 \end{equation}
 where $n$ is the number of neighbours used \parencite{herlocker2002empirical}.
 
+This approach was modified by \cite{shardanand1995social}, who used a constrained Pearson correlation coefficient, calculated as
+\begin{equation}
+    w_{a,u} = \dfrac{\sum\limits_{i=1}^{m}[(r_{a,i}-4)(r_{u,i}-4)]}{\sqrt{\sum\limits_{i=1}^{m}(r_{a,i}-4)^2\sum\limits_{i=1}^{m}(r_{u,i}-4)^2}}.
+\end{equation}
+The value 4 was used as it was the midpoint of the seven-point rating scale on which their music recommender, dubbed "The Ringo", was based. The number of neighbours was limited by applying a correlation threshold, where only users above the threshold could be considered for membership to the neighbourhood. Increasing the magnitude of this threshold resulted in greater accuracy, but limits the number of items for which the system can make recommendations \parencite{herlocker2002empirical}.
+
+The most common alternative similarity measure to the Pearson correlation coefficient is the cosine similarity, which is calculated between users $a$ and $u$ as
+\begin{equation}
+    cos(a,u) = \dfrac{(a\cdot u)}{||a||u||},
+\end{equation}
+Where $a$ and $u$ represent the ratings vectors for each user, considering only items which have been rated by both users \parencite{handbook_ch2}.
+
+This measure can then be used to make a prediction for user $a$ and item $i$ by selecting the $n$ most similar neighbours and taking an average of their rating of the item, weighted by their cosine similarity.
+
+Though the Pearson correlation and cosine similarity are the most popular measures used, it is possible to use any other common distance measure, such as the Euclidean or Minkowski distance \parencite{handbook_ch2}.
+
 \subsubsection{Item-based similarity}
+An alternative to neighbourhood models is to use an item-oriented approach, in which the known ratings of a user for similar items are used to make a prediction for a new item \parencite{cf_1.6_implicit}.
+
+When making a prediction for user $a$ and item $i$, all known ratings of the user are used as the neighbourhood. The predicted rating is taken as the average of all known ratings, weighted by their corresponding item similarity with $i$. The similarity measure for this neighbourhood can be any of the same measures as used in the user-based approach, only in this case the similarities are measured between items instead of users \parencite{handbook_1.4_neighbourhood}.
 
 \subsection{Latent Factor Recommender Models}
+
 
 \subsection{Commonly Used Data Sets for Recommender Systems}
