@@ -166,6 +166,49 @@ An alternative to neighbourhood models is to use an item-oriented approach, in w
 When making a prediction for user $a$ and item $i$, all known ratings of the user are used as the neighbourhood. The predicted rating is taken as the average of all known ratings, weighted by their corresponding item similarity with $i$. The similarity measure for this neighbourhood can be any of the same measures as used in the user-based approach, only in this case the similarities are measured between items instead of users \parencite{handbook_1.4_neighbourhood}.
 
 \subsection{Latent Factor Recommender Models}
+Latent factor models attempt to characterise both users and items using anywhere in the region of between 20 to 100 factors. These latent factors capture behavioural patterns between users and items in the ratings space \parencite{koren2009matrix}.
 
+The most common version of latent factor model is the matrix factorisation method, used by \cite{bellkor_2008} to win the Netflix Prize. In this approach, the user/item interaction data is represented as a matrix which is then factorised as the product of two smaller matrices. Figure \ref{fig:matrix} shows the matrix representation of the explicit interactions between users and items. All blue values are known ratings submitted by users, while the white zeroes represent unknown values which need to be predicted.
 
-\subsection{Commonly Used Data Sets for Recommender Systems}
+\begin{figure}[H]
+\centering
+\includegraphics[width=6.5cm]{Figures/2_3_matrix.png}
+\decoRule
+\caption[Ratings-matrix]{Interactions between users and items represented as a matrix \parencite{bailey_2016}.}
+\label{fig:matrix}
+\end{figure}
+
+If the ratings matrix consists of $m$ rows and $n$ columns, then any two matrices of dimensions $m$ x $d$ and $n$ x $d$ respectively, when cross multiplied together, would result in a matrix of the same dimensions as the original ratings matrix. The common dimension, $d$, is a hyperparameter which represents the number of latent factors \parencite{bailey_2016}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=10.5cm]{Figures/2_4_matrix_factorization.png}
+\decoRule
+\caption[Factor-matrices]{Ratings matrix factorised as product of two latent factor matrices \parencite{bailey_2016}.}
+\label{fig:factors}
+\end{figure}
+
+The two resulting latent factor matrices consist of vectors which describe both the users and the items respectively. For each user and item, there will be $d$ latent factors which represent their characteristics. In the case that the items are movies, the latent factors might represent known dimensions, like genres such as comedy or romance. They might also represent deeper dimensions, like dialogue style or the amount of satire. The latent factors might also represent completely uninterpretable dimensions too. In the case of users, the latent factors represent their partiality to the corresponding item latent factor \parencite{koren2009matrix}.
+
+To get the predicted rating for user $u$ and item $i$, one simply needs to take the dot product of row $u$ from the user matrix, $q$ with column $i$ of the item matrix, $p$, represented as
+
+\begin{equation}
+    \hat{r}_{ui} = q_i^T p_u.
+\label{eqn:dot_prod}
+\end{equation}
+
+\subsubsection{Optimisation techniques}
+The two latent factor matrices that are used in the matrix factorisation approach need to be \textit{learned}. Their values can be solved through either stochastic gradient descent or alternating least squares (ALS). The ALS optimisation technique was the favoured approach taken by \cite{bellkor_2008}. This technique holds the values in one factor matrix fixed and then uses least squares to solve the values in the other and \textit{vice versa} \parencite{koren2009matrix}.
+
+\subsubsection{Biases}
+The matrix factorisation approach may be extended to include biases which compensate for systematic tendencies across both users and items. For example, some users tend to rate all items higher (or lower) than average, and some items might be generally over-rated by all users \parencite{koren2009matrix}.
+
+When incorporating biases, equation \ref{eqn:dot_prod} becomes
+\begin{equation}
+    \hat{r}_{ui} = \mu + b_u + b_i + q_i^T p_u,
+\label{eqn:dot_bias}
+\end{equation}
+where $\mu$ is the overall average rating and $b_u$ and $b_i$ are the user and item biases respectively.
+
+\subsection{Netflix Prize winning submission}
+Wrap it all up by talking through the winning team's Netflix Prize attempts...

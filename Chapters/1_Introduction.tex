@@ -2,148 +2,39 @@
 
 \label{intro} % For referencing the chapter elsewhere, use \ref{intro} 
 
-%----------------------------------------------------------------------------------------
+\section{Problem Description}
+The purpose of a  recommender system is to help people make decisions in an area where they do not necessarily have a wealth of personal experience \parencite{rs_1.1_Resnick}. The output of a recommender system is usually in the form of a suggestion to the user, helping them to make decisions such as what items to buy, what music to listen to or what movie to rent \parencite{handbook_1.1_intro}.
 
-% Define some commands to keep the formatting separated from the content 
-\newcommand{\keyword}[1]{\textbf{#1}}
-\newcommand{\tabhead}[1]{\textbf{#1}}
-\newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\file}[1]{\texttt{\bfseries#1}}
-\newcommand{\option}[1]{\texttt{\itshape#1}}
+With the internet boom of the 90s ... growth of e-commerce ... too many options started to overwhelm users. 
 
-%----------------------------------------------------------------------------------------
-The urban environment is one which is rapidly growing and ever-changing. Acquiring spatial information of features in this environment using traditional surveying methods can be a time-consuming process. A single street corner in a city can contain fire hydrants, bus stops, road signs, ATMs and billboards - to name only a few features. Recording all of the features found on all of the streets in a city using equipment such as GPS receivers or theodolites would be prohibitively time-consuming. Additionally, to map any changes to the urban environment would require an entire re-survey.
+Already in 2007, the online video subscription service Netflix had collected nearly 2 billion ratings from more than 11.7 million subscribers on over 85 thousand titles in its first 10 years of operating \parencite{netflix_description}.
 
-While traditional surveying equipment is designed for high levels of accuracy, this level is not necessary for certain applications. Sometimes, it is more important to be able to find a large number of a certain feature in an area than to be able to position one of those features to the nearest millimetre. For example, a person looking for an ATM does not need to know its precise location; rather simply where the nearest ATM is.
+More choices means more feedback, we now have more recorded interactions of what people do -- and \textit{don't} -- like than ever before.
 
-Mobile Mapping Systems such as Google Street View capture georeferenced imagery at a much faster rate than manual surveys \parencite{ref2.9}. With current state-of-the-art image classification algorithms surpassing human-level performance \parencite{convolution1}, it is possible to combine these two technologies to calculate coordinate data for a large number of features in a relatively short space of time.
+Much of these data are low-dimensional, typically containing only three attributes for each interaction.
+
+Advances in deep learning, combined with the recent advent of GPU training, have unlocked the potential to retrieve cleaner signal from large data sets.
+
+The Netflix Prize contest in 2008 paved the way for large improvements the state of the art for predictive ability in collaborative filtering models, but this was before the mainstream adoption of deep learning.
+
+This project seeks to revisit the advances made by the contestants of the Netflix Prize and compare their results to those achievable with more modern deep learning approaches.
 
 \section{Background to Research}
-Machine learning is a rapidly growing field which is influencing nearly everyone's daily lives. Targeted online marketing, email spam filtering, self-driving cars - all of these are examples of how machine learning is being used to change the world in which we live \parencite{ref1.1}.
-The particular area of machine learning most relevant to this research project is that of computer vision, and more specifically, how state-of-the-art image recognition algorithms can be used to map the world around us using only digital images.
 
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=12cm]{Figures/1_street_scene.jpg}
-\decoRule
-\caption[Street Scene]{Urban Environment \parencite{img1.1}.}
-\label{fig:1.1}
-\end{figure}
 
-Figure \ref{fig:1.1} shows a typical scene found in a city on any given day. As humans, we do not struggle to recognise features within this image. At the largest scale, there is an intersection with some pedestrians and a car as well as large buildings. It is not much more difficult for us to also recognise a trash can, a fire hydrant, and a few road signs. Finally, we might pick up some of the finer details in the image such as the brand names on buildings, the outfits of the people, and the types of cars.
+\section{Purpose of the Research}
 
-While all of this pattern recognition comes naturally to humans, this task is more difficult to solve programmatically. However; with recent advances in convolutional neural networks, this level of pattern recognition is becoming more achievable in the field of computer vision.
 
-It is possible to detect and map the road signs - useful for navigation systems used in vehicles, the fire hydrants - useful for disaster planning and management, the trash cans - useful to town planners for keeping cities clean. Using digital imagery to map cities allows for the creation of countless numbers of map layers, all from the same data, and with a fraction of the effort which would otherwise be necessary.
+\section{Layout of the Paper}
+The literature review provides an overview of the relevant literature on recommender systems. The chapter covers the methodology surrounding the evaluation of recommender systems and outlines the two main types of models, namely content-based and collaborative filtering models. Particular attention is given to collaborative filtering models applied to explicit feedback data, leading to an in-depth discussion of the models that have been developed to perform this task on explicit feedback data.
 
-It has been shown that positioning features using the method of photogrammetric intersection of two Google Street View images can achieve accuracies in the region of $\pm$1m for x and y coordinate values \parencite{ref2.8}. Furthermore, the recent increase in the use of convolutional neural networks for image classification has improved classification performance to beyond human-level. Classification error rates are now below 5\%, which is considered near or less than the error rate of which humans are capable \parencite{convolution1}.
+Chapter 3 ...
 
-The majority of feature detection algorithms used in the field of geomatics make use of older methods such as support vector machines or colour segmentation. The new approaches which make use of convolutional neural networks have the advantage (in addition to being highly accurate) of not requiring any form of image pre-processing. This means all that is required to classify images is correctly labelled training data - of which there is an abundance, freely available today on the internet \parencite{imagenet1}.
+Chapter 4 ...
 
-\section{Aim and Objectives}
-This project aims to make use of state-of-the-art image classification algorithms in combination with Google Street View images for the detection and positioning of urban features on a large scale.
+Chapter 5 ...
 
-Transfer learning will be applied to a convolutional neural network which has been developed for image classification. The final layer of the convolutional neural network will be retrained to classify images into user-chosen classes of typical urban features and this will be tested using images obtained from Google Street View. 
+Conclusions and recommendations for further research are outlined in Chapter 6
 
-Furthermore, the classifier will be adapted to perform object localisation in general street view scenes. Finally, a photogrammetric intersection algorithm will be used to obtain co-ordinates for detected features.
-
-The solution consists of two components: 
-\begin{itemize}
-    \item Feature detection within an image.
-    \item Feature positioning in a real-world co-ordinate system.
-\end{itemize}
-
-Both the effectiveness (i.e. has the feature been correctly detected?), and the accuracy of the placement will be assessed. Accuracy of placement will be determined by comparing the calculated co-ordinates to co-ordinates obtained for features directly from georeferenced satellite imagery.
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=12cm]{Figures/1_intersection.pdf}
-\decoRule
-\caption[GSV intersection]{Feature detected in two images given co-ordinates through photogrammetric intersection.}
-\label{fig:intersection}
-\end{figure}
-
-In figure \ref{fig:intersection}, each image 1 and 2 will be passed into the convolutional neural network which will detect the presence and image co-ordinates of the fire hydrant. Then, the real-world co-ordinates of the fire hydrant will be calculated by intersection. Since the positions and orientations of the Street View images are known, the intersecting image rays can be used to find real-world co-ordinates.
-
-From this research project stem two major objectives, each with their own set of sub-objectives. The first major objective is to use a convolutional neural network to classify imagery at a high level of accuracy. In order to solve this first objective, a few questions need to be answered:
-
-\textbf{Input Data}
-\begin{itemize}
-\item How many images of a single class of feature need to be used as training data?
-\item Are there any requirements for these training images (resolution, image size etc.)?
-\item How is the accuracy of classification affected by variations within this training data?
-\end{itemize}
-
-\textbf{Classification}
-\begin{itemize}
-\item Which features can be classified accurately, i.e. what level of specificity can be achieved by the CNN?
-\item What level of accuracy can be achieved for the localisation of classified features within an image?
-\end{itemize}
-
-The second major objective is to use photogrammetry to calculate co-ordinates for a common feature found in two images. This leads to the following research questions:
-
-\textbf{Feature Placement}
-\begin{itemize}
-\item What levels of accuracy can be achieved in the positional accuracy of features calculated using photogrammetric intersection of Street View images?
-\item What are the limiting factors with regards to improving positional accuracy?
-\end{itemize}
-
-\subsection{Research Questions}
-The questions listed above can be condensed to form three major research questions relating to the major research objectives:
-
-\begin{enumerate}
-\item What is the accuracy achieved for a detected feature within a Street View image using a convolutional neural network?
-\item What is the best level of accuracy achieved for positioning common features found in multiple Street View images?
-\item When combining the two components (image classifier and intersection) what is the final positional accuracy of features?
-\end{enumerate}
-
-\section{Methodology}
-Image classification will be handled by the pre-trained Inception-v3 model. The inception model is a deep Convolutional Neural Network (CNN) developed by Google specifically for the purpose of image classification. It is possible to re-train this model to classify images into any number of defined classes using appropriate training imagery.
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=12cm]{Figures/1_postbox.jpg}
-\decoRule
-\caption[Post Box Classification]{Input image of a postbox is assigned the correct label}
-\label{fig:postbox}
-\end{figure}
-
-CNNs take hundreds of class-labelled training images and learn the underlying pattern in each class. When trained correctly, CNNs exceed human performance in terms of classification accuracy \parencite{convolution1}.
-
-CNNs can be adapted to perform object localisation by using a moving window approach whereby the input test image is segmented by moving a window of set size across it and passing each sub-image to the CNN to check for the presence of a feature.
-
-\begin{figure}[!ht]
-\centering
-\includegraphics[width=12cm]{Figures/1_postboxstreet.jpg}
-\decoRule
-\caption[Post Box Localisation]{Postbox feature is detected within an input image of a larger street scene, the position within the image is shown by the yellow bounding box.}
-\label{fig:postbox2}
-\end{figure}
-
-For placement of features in a co-ordinate system, a software application written in Python will provide this solution. This application will calculate the position of a feature by means of a photogrammetric intersection. The yellow bounding box shown in figure \ref{fig:postbox2} will be used to obtain image co-ordinates in two separate Street View images which will be used to perform an intersection of the two image rays which, in theory, meet at the position of the object in the real world.
-
-\subsection{Research Scope}
-This study is restricted to the development and testing of this concept using the City of Cape Town as the example urban environment.
-The concept is developed in the following way:
-\begin{itemize}
-\item Retrain the Inception-v3 model to classify images of features found within this environment.
-\item Develop an additional algorithm to find where these features appear within Google Street View georeferenced images.
-\item Convert detected features into 2D co-ordinates within a chosen co-ordinate system.
-\item Assess the accuracies of the final co-ordinates and compare to conventional surveying techniques.
-\end{itemize}
-
-\section{Data}
-
-\subsection{Third Party Software}
-The Python files necessary for using the Inception-v3 model can be found at \url{https://github.com/tensorflow/tensorflow/tree/r1.3/tensorflow/examples/image_retraining}
-
-Street imagery can be obtained from the Google Street View (hereafter abbreviated as GSV) Application Program Interface (API) by entering a URL into any web browser. The URL has parameters which may be changed to request images from different locations within the GSV network. 
-
-\url{https://maps.googleapis.com/maps/api/streetview?size=640x640&location=-33.9231755,18.4158478&fov=90&heading=341.97&pitch=10&key}
-
-The size of the image can be anywhere up to 640 x 640 pixels in size. Location is given in latitude and longitude, up to seven decimal places. Each API request also specifies the heading and pitch of the camera, that is the horizontal bearing taken clockwise from North and the vertical angle taken from the horizontal.
-
-\subsection{Training Data}
-For the Inception model to be able to classify images into new classes, it needs to be trained. Training imagery for these classes was collected from the GSV API itself. The details of the collection and use of training imagery is covered in greater detail in Chapter \ref{method}.
 
  
