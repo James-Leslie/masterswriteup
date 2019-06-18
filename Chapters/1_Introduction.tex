@@ -5,22 +5,20 @@
 \section{Problem Description}
 The purpose of a  recommender system is to help people make decisions in an area where they do not necessarily have a wealth of personal experience \parencite{rs_1.1_Resnick}. The output of a recommender system is usually in the form of a suggestion to the user, helping them to make decisions such as what items to buy, what music to listen to or what movie to rent \parencite{handbook_1.1_intro}.
 
-With the internet boom of the 90s ... growth of e-commerce ... too many options started to overwhelm users. 
+As the world of online commerce grew with the internet boom of the '90s, shoppers were presented with an overwhelming number of options to choose from. The need arose for a means for users to filter through the multitude of options to find the offerings most relevant to them \parencite{handbook_1.1_intro}.
 
-Already in 2007, the online video subscription service Netflix had collected nearly 2 billion ratings from more than 11.7 million subscribers on over 85 thousand titles in its first 10 years of operating \parencite{netflix_description}.
+As the number of options grew, so too did the amount of user feedback data. Already in 2007, the online video subscription service Netflix had collected nearly 2 billion ratings from more than 11.7 million subscribers on over 85 thousand titles in its first 10 years of operating. Considering the number of similar streaming and online commerce services, there is indeed an overwhelming number of options for users to choose from -- but also a wealth of data recommender systems can use to make suggestions \parencite{netflix_description}.
 
 More choices means more feedback, we now have more recorded interactions of what people do -- and \textit{don't} -- like than ever before.
 
-Much of these data are low-dimensional, typically containing only three attributes for each interaction.
-
-Advances in deep learning, combined with the recent advent of GPU training, have unlocked the potential to retrieve cleaner signal from large data sets.
-
-The Netflix Prize contest in 2008 paved the way for large improvements the state of the art for predictive ability in collaborative filtering models, but this was before the mainstream adoption of deep learning.
-
-This project seeks to revisit the advances made by the contestants of the Netflix Prize and compare their results to those achievable with more modern deep learning approaches.
+Much of these data are low-dimensional, typically containing only two or three attributes for each interaction, namely the user and item IDs and (optionally) a rating. This type of low-dimensional data is what separates recommender models from typical machine learning applications and is the focus of a specific type of approach to recommender system, known as collaborative filtering \parencite{cf_1.5_explicit}.
 
 \section{Background to Research}
+The Netflix Prize contest in 2008 paved the way for large improvements to the state of the art for predictive ability in collaborative filtering models \parencite{netflix_description}. The contest saw the progression from simpler k-nearest-neighbour models to the use of more advanced latent factor models, achieving a reduction of 10\% in the root mean squared error compared to the previous state of the art \parencite{netflix_bellkor}.
 
+Despite the advances made during the contest, the timing of these efforts was untimely as this was before the mainstream adoption of deep learning. Four years after the close of the Netflix Prize contest "AlexNet", utilising the enhanced computational capacity of GPUs for model training, showcased the predictive ability of neural networks with its record-breaking accuracy in the annual ImageNet image classification contest \parencite{krizhevsky2012imagenet}. Since then, the field of deep learning has continued to grow, with neural networks achieving state-of-the-art accuracy on a wide range of problems \parencite{alom2018history}.
+
+This project seeks to revisit the advances made by the contestants of the Netflix Prize and compare their results to those achievable with more modern deep learning approaches.
 
 \section{Purpose of the Research}
 
