@@ -3,11 +3,11 @@
 \label{intro} % For referencing the chapter elsewhere, use \ref{intro} 
 
 \section{Problem Description}
-The purpose of a  recommender system is to help people make decisions in an area where they do not necessarily have a wealth of personal experience \parencite{rs_1.1_Resnick}. The output of a recommender system is usually in the form of a suggestion to the user, helping them to make decisions such as what items to buy, what music to listen to or what movie to rent \parencite{handbook_1.1_intro}.
+With the internet boom of the '90s, many industries have migrated much of their business to the web. Digital commerce is no exception, with Forbes magazine predicting that online sales will continue to grow to a total volume of \$5.8 trillion by 2022. This number would make up over 17\% of all business-to-consumer sales and would be achieved through annual compound growth rates of around 20\% \parencite{forbes2018growth}. The growth in this industry has presented shoppers with an overwhelming number of options to choose from, creating the need for a means for users to filter through the multitude of options \parencite{handbook_1.1_intro}.
 
-As the world of online commerce grew with the internet boom of the '90s, shoppers were presented with an overwhelming number of options to choose from. The need arose for a means for users to filter through the multitude of options to find the offerings most relevant to them \parencite{handbook_1.1_intro}.
+The purpose of a  recommender system is to help people make decisions in an area where they do not necessarily have a wealth of personal experience \parencite{rs_1.1_Resnick}. They have been developed to aid users with filtering through wide ranges of options at their disposal to find those offerings most relevant to them. The output of a recommender system is usually in the form of a suggestion to the user, helping them to make decisions such as what items to buy, what music to listen to or what movie to rent \parencite{handbook_1.1_intro}.
 
-As the number of options grew, so too did the amount of user feedback data. Already in 2007, the online video subscription service Netflix had collected nearly 2 billion ratings from more than 11.7 million subscribers on over 85 thousand titles in its first 10 years of operating. Considering the number of similar streaming and online commerce services, there is indeed an overwhelming number of options for users to choose from -- but also a wealth of data recommender systems can use to make suggestions \parencite{netflix_description}.
+As the number of options has grown, so too has the amount of user feedback data. Already in 2007, the online video subscription service Netflix had collected nearly 2 billion ratings from more than 11.7 million subscribers on over 85 thousand titles in its first 10 years of operating. Considering the number of similar streaming and online commerce services, there is indeed an overwhelming number of options for users to choose from -- but also a wealth of data recommender systems can use to make suggestions \parencite{netflix_description}.
 
 More choices means more feedback, we now have more recorded interactions of what people do -- and \textit{don't} -- like than ever before.
 
@@ -16,12 +16,12 @@ Much of these data are low-dimensional, typically containing only two or three a
 \section{Background to Research}
 The Netflix Prize contest in 2008 paved the way for large improvements to the state of the art for predictive ability in collaborative filtering models \parencite{netflix_description}. The contest saw the progression from simpler k-nearest-neighbour models to the use of more advanced latent factor models, achieving a reduction of 10\% in the root mean squared error compared to the previous state of the art \parencite{netflix_bellkor}.
 
-Despite the advances made during the contest, the timing of these efforts was untimely as this was before the mainstream adoption of deep learning. Four years after the close of the Netflix Prize contest "AlexNet", utilising the enhanced computational capacity of GPUs for model training, showcased the predictive ability of neural networks with its record-breaking accuracy in the annual ImageNet image classification contest \parencite{krizhevsky2012imagenet}. Since then, the field of deep learning has continued to grow, with neural networks achieving state-of-the-art accuracy on a wide range of problems \parencite{alom2018history}.
+Speak a little more here about the techniques used...
 
-This project seeks to revisit the advances made by the contestants of the Netflix Prize and compare their results to those achievable with more modern deep learning approaches.
+Despite the advances made during the contest, these efforts were untimely as this was before the mainstream adoption of deep learning. Four years after the close of the Netflix Prize contest "AlexNet", utilising the enhanced computational capacity of GPUs for model training, showcased the predictive ability of neural networks with its record-breaking accuracy in the annual ImageNet image classification contest \parencite{krizhevsky2012imagenet}. Since then, the field of deep learning has continued to grow, with neural networks achieving state-of-the-art accuracy on a wide range of problems \parencite{alom2018history}.
 
 \section{Purpose of the Research}
-
+This project seeks to revisit the advances made by the contestants of the Netflix Prize and compare their results to those achievable with more modern deep learning approaches.
 
 \section{Layout of the Paper}
 The literature review provides an overview of the relevant literature on recommender systems. The chapter covers the methodology surrounding the evaluation of recommender systems and outlines the two main types of models, namely content-based and collaborative filtering models. Particular attention is given to collaborative filtering models applied to explicit feedback data, leading to an in-depth discussion of the models that have been developed to perform this task on explicit feedback data.
