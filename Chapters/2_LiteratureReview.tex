@@ -210,5 +210,51 @@ When incorporating biases, equation \ref{eqn:dot_prod} becomes
 \end{equation}
 where $\mu$ is the overall average rating and $b_u$ and $b_i$ are the user and item biases respectively.
 
-\subsection{Netflix Prize winning submission}
-Wrap it all up by talking through the winning team's Netflix Prize attempts...
+\subsubsection{Netflix Prize winning submission}
+The winning submission made use of an ensemble model, achieving an RMSE of 0.8712 on the test set using a combined total of over 500 models which included matrix factorisation, restricted Boltzmann machines and nearest neighbour models. Despite this extensive range of models used in their winning ensemble, the team members noted that the most accurate standalone approach was to use matrix factorisation \parencite{netflix_bellkor}. 
+
+Aside from the choice of algorithm(s), the winning team paid special attention to what they termed "baseline predictors". The purpose of these was to "encapsulate those effects which do not involve user-item interaction." This method meant that predicted ratings were decomposed into multiple parts and is not dissimilar to how equation \ref{eqn:dot_bias} represents predicted ratings. In this equation, the first three terms can be considered baseline features, while the final term, $q_i^T p_u$, represents the specific user-item interaction. For example when predicting how a user, Alice, might rate the movie Inception, the prediction would first consider the average rating of the movie, as well as the average of all of Alice's ratings as the baseline predictors. Then, the specific user-item interaction is made using the latent features and is used to adjust the baseline prediction. In addition to user and item biases, temporal aspects were used to adjust the baseline. Factors such as time since a user's first rating and also how many ratings a user made on a particular day were found to have a significant impact on user ratings. To capture temporal effects, the user and item biases were each calculated as a function of time. 
+
+When accounting for temporal components, equation \ref{eqn:dot_bias} becomes
+
+\begin{equation}
+    \hat{r}_{ui} = \mu + b_u(t_{ui}) + b_i(t_{ui}) + q_i^T p_u,
+\label{eqn:temp_baseline}
+\end{equation}
+
+where $b_u$ and $b_i$ are functions that change over time \parencite{netflix_bellkor}.
+
+\subsection{Uses of deep learning in collaborative filtering}
+Tremendous effort was required from all of the contestants of the Netflix prize to push the boundaries of predictive ability in CF models. Ensemble models and intricate modelling of baseline predictors were used to eek out marginally better models; however, it was shown that the improvement in accuracy was largely due to the use of latent factors. Then, it was through the use of matrix decomposition that these latent factors were learned; however neural networks can perform the same task through the use of embedding layers.
+
+The first notable use of deep learning for collaborative filtering was in \cite*{sedhain2015autorec}, when \citeauthor{sedhain2015autorec} used an autoencoder framework for their \textit{AutoRec} model. They opted for an item-based approach in which the input to the neural network is a partially observed vector containing all user ratings for a given item. Figure \ref{fig:autorec-arch} shows the architecture of this model.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=8cm]{Figures/2_autoRec.png}
+\decoRule
+\caption[AutoRec]{AutoRec architecture \parencite{sedhain2015autorec}}
+\label{fig:autorec-arch}
+\end{figure}
+
+It can be seen in figure \ref{fig:autorec-arch} that the input dimension of the AutoRec model is equal to the number of users, $n$. Since each input is sparse, only the parameters associated with the observed ratings are updated during backpropagation. This means that the trained model takes as input a sparse item ratings vector, representing all available user ratings for that item, and outputs a complete ratings vector containing all predicted user ratings for the item \parencite{sedhain2015autorec}.
+
+Evaluation of this model was done using the MovieLens 1M, 10M and Netflix datasets using 5 separate random 90\%-10\% train-test splits, with 10\% of the training data being used for hyperparameter tuning. Test accuracy was taken as the average of these 5 random splits and users or items in the test set without training observations were given a default rating of 3 stars. They reported test accuracies of 0.831, 0.782 and 0.823 on the MovieLens 1M, 10M and Netflix datasets respectively \parencite{sedhain2015autorec}. 
+
+Although the results achieved by \citeauthor{sedhain2015autorec} represented an improvement of more than 5\% on the winning submission to the Netflix Prize, it should be noted that their method of evaluation on the Netflix set was not equivalent to the true holdout set used in the competition.
+
+Then this: \parencite{zheng2016neural}.
+
+A neural architecture was used in the "Neural Collaborative Filtering" (NCF) model created by \cite{he2017neural}. This particular effort focused on the CF scenario where only implicit feedback is used; however, the architecture used is equally suited to using explicit feedback. Figure \ref{fig:ncf-arch} shows the architecture of a NCF model, with $X$ hidden units and $k$ latent factors.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=9.5cm]{Figures/2_neural-cf.png}
+\decoRule
+\caption[Neural Collaborative Filtering]{Neural Collaborative Filtering architecture \parencite{he2017neural}}
+\label{fig:ncf-arch}
+\end{figure}
+
+The NCF model generalises matrix factorisation through the use of an embedding layer, which combines both user and item latent factors. The embedding layer serves the same purpose as the latent factor matrices in the MF approach, while the hidden layers allow for non-linear combinations of these latent factors when predicting ratings.
+
+Finally: \parencite{rendle2019difficulty}.

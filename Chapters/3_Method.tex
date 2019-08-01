@@ -2,6 +2,11 @@
 This chapter details the methods used in this project. First, the significance of the research is outlined against the context of the literature review. Next, the datasets used for training and validation of models are described and compared. Then, the ...
 
 \section{Significance of this research}
+Most of the previous work on collaborative filtering tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in collaborative filtering datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers. 
+
+Collaborative filtering models, by definition, do not make use of meta data for predicting user preferences -- this is the domain of content-based models. However, meta data such as item genres are still useful to users for assessing recommendations provided to them. Users cannot be expected to trust recommendations provided to them, without having some sort of description of the recommended item. While collaborative filtering has shown its ability to provide recommendations to users without using content attributes, descriptive features are still useful for users to make informed decisions on \textit{which} recommendations to choose.
+
+The following research questions motivated this minor dissertation: RQ1 -- can transfer learning be used to re-purpose a rating prediction model to predict item genres? RQ2 -- How does the choice of hyperparameters in the rating prediction model affect the performance of the genre prediction model?
 
 \section{Datasets used}
 There were five different datasets used in this research project, all of which contain explicit ratings made by users across various item sets. Three datasets contain movie ratings, while the other two contain ratings of books and jokes respectively.
@@ -37,7 +42,7 @@ The Jester dataset has the highest density by a significant margin (56.34\%). ML
 In terms of size, ML 100K is ten times smaller than the second smallest ML 1M set, while the largest set is ML 10M with 10 million ratings. The Jester data set contains the most users, while ML 10M contains the most items, albeit only by a slight margin over goodbooks-10k.
 
 \subsection{Distribution of ratings}
-Table \ref{tab:ratings-distribution} provides a summary of the distribution of ratings across users and items in each of the datasets. 
+Table \ref{tab:ratings-distribution} provides a summary of the distribution of ratings across users and items in each of the datasets.
 
 \begin{table}[H]
 \caption[Ratings distribution]{Summary of the distribution of ratings in each dataset}
@@ -47,14 +52,20 @@ Table \ref{tab:ratings-distribution} provides a summary of the distribution of r
 \toprule
 \textbf{Name} & \textbf{Min User} & \textbf{Max User} & \textbf{Avg User} & \textbf{Min Item} & \textbf{Max Item} & \textbf{Avg Item} \\
 \midrule
-ML 100K & ?? & ?? & ?? & ?? & ?? & ?? \\
-ML 1M & 20 & 2314 & 166 & 1 & 3428 & 270 \\
-ML 10M & ?? & ?? & ?? & ?? & ?? & ?? \\
-Jester & ?? & ?? & ?? & ?? & ?? & ?? \\
-Goodbooks-10k & ?? & ?? & ?? & ?? & ?? & ?? \\
+ML 100K & 20 & 737 & 106 & 1 & 583 & 60 \\
+ML 1M & 20 & 2 314 & 166 & 1 & 3 428 & 270 \\
+ML 10M & 20 & 7 359 & 143 & 1 & 34 864 & 937 \\
+Jester & 15 & 100 & 56 & 18 505 & 73 410 & 41 362 \\
+Goodbooks-10k & 19 & 200 & 112 & 8 & 22 806 & 598 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+All three MovieLens datasets have a minimum of 20 ratings per user, while some of the movies have only 1 rating.
+
+The Jester dataset has the fewest average ratings per user; however, each item is rated over 41-thousand times on average, with even the least frequently rated item having over 18-thousand ratings.
+
+\textbf{put some plots here}...
 
 \begin{figure}[H]
 \centering
