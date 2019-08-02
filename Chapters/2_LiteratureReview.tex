@@ -168,23 +168,23 @@ When making a prediction for user $a$ and item $i$, all known ratings of the use
 \subsection{Latent Factor Recommender Models}
 Latent factor models attempt to characterise both users and items using anywhere in the region of between 20 to 100 factors. These latent factors capture behavioural patterns between users and items in the ratings space \parencite{koren2009matrix}.
 
-The most common version of latent factor model is the matrix factorisation method, used by \cite{bellkor_2008} to win the Netflix Prize. In this approach, the user/item interaction data is represented as a matrix which is then factorised as the product of two smaller matrices. Figure \ref{fig:matrix} shows the matrix representation of the explicit interactions between users and items. All blue values are known ratings submitted by users, while the white zeroes represent unknown values which need to be predicted.
+The most common version of latent factor model is the matrix factorisation method, used by \cite{bellkor_2008} to win the Netflix Prize. In this approach, the user/item interaction data is represented as a matrix which is then factorised as the product of two smaller matrices. Figure \ref{fig:2_matrix-decomposition} shows the matrix representation of the explicit interactions between users and items. All blue values are known ratings submitted by users, while the white zeroes represent unknown values which need to be predicted.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=6.5cm]{Figures/2_3_matrix.png}
+\includegraphics[width=6cm]{Figures/2_3_matrix.png}
 \decoRule
-\caption[Ratings-matrix]{Interactions between users and items represented as a matrix \parencite{bailey_2016}.}
-\label{fig:matrix}
+\caption[Ratings matrix]{Interactions between users and items represented as a matrix \parencite{bailey_2016}.}
+\label{fig:2_matrix-decomposition}
 \end{figure}
 
 If the ratings matrix consists of $m$ rows and $n$ columns, then any two matrices of dimensions $m$ x $d$ and $n$ x $d$ respectively, when cross multiplied together, would result in a matrix of the same dimensions as the original ratings matrix. The common dimension, $d$, is a hyperparameter which represents the number of latent factors \parencite{bailey_2016}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=10.5cm]{Figures/2_4_matrix_factorization.png}
+\includegraphics[width=9.5cm]{Figures/2_4_matrix_factorization.png}
 \decoRule
-\caption[Factor-matrices]{Ratings matrix factorised as product of two latent factor matrices \parencite{bailey_2016}.}
+\caption[Matrix decomposition]{Ratings matrix factorised as product of two latent factor matrices \parencite{bailey_2016}.}
 \label{fig:factors}
 \end{figure}
 
@@ -241,10 +241,6 @@ It can be seen in figure \ref{fig:autorec-arch} that the input dimension of the 
 
 Evaluation of this model was done using the MovieLens 1M, 10M and Netflix datasets using 5 separate random 90\%-10\% train-test splits, with 10\% of the training data being used for hyperparameter tuning. Test accuracy was taken as the average of these 5 random splits and users or items in the test set without training observations were given a default rating of 3 stars. They reported test accuracies of 0.831, 0.782 and 0.823 on the MovieLens 1M, 10M and Netflix datasets respectively \parencite{sedhain2015autorec}. 
 
-Although the results achieved by \citeauthor{sedhain2015autorec} represented an improvement of more than 5\% on the winning submission to the Netflix Prize, it should be noted that their method of evaluation on the Netflix set was not equivalent to the true holdout set used in the competition.
-
-Then this: \parencite{zheng2016neural}.
-
 A neural architecture was used in the "Neural Collaborative Filtering" (NCF) model created by \cite{he2017neural}. This particular effort focused on the CF scenario where only implicit feedback is used; however, the architecture used is equally suited to using explicit feedback. Figure \ref{fig:ncf-arch} shows the architecture of a NCF model, with $X$ hidden units and $k$ latent factors.
 
 \begin{figure}[H]
@@ -256,5 +252,7 @@ A neural architecture was used in the "Neural Collaborative Filtering" (NCF) mod
 \end{figure}
 
 The NCF model generalises matrix factorisation through the use of an embedding layer, which combines both user and item latent factors. The embedding layer serves the same purpose as the latent factor matrices in the MF approach, while the hidden layers allow for non-linear combinations of these latent factors when predicting ratings.
+
+Although the results achieved by \citeauthor{sedhain2015autorec} represented an improvement of more than 5\% on the winning submission to the Netflix Prize, it should be noted that their method of evaluation on the Netflix set was not equivalent to the true holdout set used in the competition.
 
 Finally: \parencite{rendle2019difficulty}.

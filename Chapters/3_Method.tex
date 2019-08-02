@@ -2,16 +2,16 @@
 This chapter details the methods used in this project. First, the significance of the research is outlined against the context of the literature review. Next, the datasets used for training and validation of models are described and compared. Then, the ...
 
 \section{Significance of this research}
-Most of the previous work on collaborative filtering tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in collaborative filtering datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers. 
+Most of the previous work on collaborative filtering (CF) tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in CF datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers. 
 
-Collaborative filtering models, by definition, do not make use of meta data for predicting user preferences -- this is the domain of content-based models. However, meta data such as item genres are still useful to users for assessing recommendations provided to them. Users cannot be expected to trust recommendations provided to them, without having some sort of description of the recommended item. While collaborative filtering has shown its ability to provide recommendations to users without using content attributes, descriptive features are still useful for users to make informed decisions on \textit{which} recommendations to choose.
+CF models, by definition, do not make use of meta data for predicting user preferences -- this is the domain of content-based models. However, meta data such as item genres are still useful to users for assessing recommendations provided to them. Users cannot be expected to trust recommendations provided to them, without having some sort of description of the recommended item. While CF has shown its ability to provide recommendations to users without using content attributes, descriptive features are still useful for users to make informed decisions on \textit{which} recommendations to choose.
 
 The following research questions motivated this minor dissertation: RQ1 -- can transfer learning be used to re-purpose a rating prediction model to predict item genres? RQ2 -- How does the choice of hyperparameters in the rating prediction model affect the performance of the genre prediction model?
 
 \section{Datasets used}
 There were five different datasets used in this research project, all of which contain explicit ratings made by users across various item sets. Three datasets contain movie ratings, while the other two contain ratings of books and jokes respectively.
 
-The MovieLens datasets are used frequently in collaborative filtering research efforts. GroupLens research at the university of Minnesota is responsible for maintaining these data in four stable sets of different sizes: 100K, 1M, 10M and 20M. For the purposes of this research, the 20M was not necessary and so only the first three were used. Each set is named after the number of ratings it contains. The first two datasets use a 5 star, integer-only rating scale, while the 10M and 20M datasets each contain ratings from 0.5 - 5 stars, including half star ratings \parencite{harper2016movielens}.
+The MovieLens datasets are used frequently in CF research efforts. GroupLens research at the university of Minnesota is responsible for maintaining these data in four stable sets of different sizes: 100K, 1M, 10M and 20M. For the purposes of this research, the 20M was not necessary and so only the first three were used. Each set is named after the number of ratings it contains. The first two datasets use a 5 star, integer-only rating scale, while the 10M and 20M datasets each contain ratings from 0.5 - 5 stars, including half star ratings \parencite{harper2016movielens}.
 
 The Jester dataset contains over 4.1 million ratings of 100 jokes from over 70 000 users. Ratings fall on a continuous scale between -10 and +10. The low number of items and the continuous ratings scale make this dataset notably different to the others used in this project \parencite{cf_1.2_eigentaste}.
 
@@ -81,16 +81,33 @@ The Jester dataset has the fewest average ratings per user; however, each item i
 \end{minipage}
 \end{figure}
 
-\section{Latent factor recommender models}
-The main point of progression in within the field of collaborative filtering during the Netflix Prize was the shift from neighbourhood models to the use of latent factor models.
+\section{Predicting genres from ratings}
+The process of predicting genres from explicit user-item interactions requires two steps. First, train a latent factor CF model to predict ratings. Then capture the item latent factors learnt by the model and use them to train a second model capable of mapping item latent factors to genres.
 
-\subsection{Matrix factorisation}
-Matrix factorisation provides a means for learning latent factor representations of user preferences. Furthermore, these models can include additional user and bias constant terms to accommodate any bias inherent in the feedback provided by users -- some users tend to rate items higher than others, and some items tend to be rated higher than others.
+\section{Ratings prediction}
 
-The use of these models helped to improve the state of the art in predictive ability in collaborative filtering problems; however, they include the assumption that ratings are produced as the linear combination of user and item latent factors. The advances in the field of deep learning over the last decade have shed light on the ability of neural networks to learn non-linear relationships in data sets...
+\subsection{Embedding layers}
 
-\section{Embedding layers in neural networks}
+\subsection{Model architecture}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/3_ratings-model.png}
+\decoRule
+\caption[Ratings prediction model]{Rating prediction model uses embeddings to capture latent factors of items and users}
+\label{fig:3_rating-prediction-architecture}
+\end{figure}
 
-\section{Model architecture}
+\subsection{Hyper parameters}
 
-\section{Evaluation and comparison of models}
+\section{Genre prediction}
+
+\subsection{Model architecture}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{Figures/3_genre-model.png}
+\decoRule
+\caption[Genre prediction model]{Genre prediction model re-uses the item embedding layer from the base ratings prediction model}
+\label{fig:3_genre-prediction-architecture}
+\end{figure}
+
+\subsection{Hyper parameters}
