@@ -89,7 +89,7 @@ Figure \ref{fig:netflix_submissions} shows the relative distribution of the subm
 However, in 2008, the competition reached its conclusion, when the team known as "BellKor's Pragmatic Chaos" surpassed the 10\% improvement level \parencite{netflix_bellkor}.
 
 \section{Collaborative Filtering}
-The term 'collaborative filtering' was first coined by \cite{cf_1.3_origin}, who used it to refer to a system for suggesting relevant emails for a person from a selection of mailing lists. This system incorporated the reactions of other users in the filtering process.
+The term ``collaborative filtering'' was first coined by \cite{cf_1.3_origin}, who used it to refer to a system for suggesting relevant emails for a person from a selection of mailing lists. This system incorporated the reactions of other users in the filtering process.
 
 Since then, the term has generally been used to describe a process through which known preferences of users in a group are used to predict the unknown preferences of other users \parencite{cf_1.1}. In most cases, the preferences of users within the group are indicated by a rating or score of some kind; for example, users might assign positive ratings to items they liked, and negative ratings to items they did not. The term \textit{collaborative} refers to the fact that the users of the system improve its performance with each rating that they contribute \parencite{cf_1.2_eigentaste}, i.e., as users record more ratings of items, the ability of the system to \textit{filter} accurate recommendations for other users improves. 
 
@@ -127,8 +127,6 @@ There are two main techniques used in collaborative filtering recommender system
 
 Neighbourhood-based approaches were some of the most prevalent in the early years of recommender systems at the end of the 90s. These methods make use of similarity measures to select subsets -- or neighbourhoods -- of users or items \parencite{cf_1.6_implicit}. These neighbourhoods are used to produce weighted average ratings to generate predictions for users \parencite{herlocker1999algorithmic}.
 
-Here's a good reference: \parencite{herlocker2002empirical}
-
 \subsubsection{User-based similarity}
 The first types of neighbourhood models estimated unknown ratings using a user-oriented approach in which predictions were based on the known ratings of like-minded users \parencite{cf_1.6_implicit}.
 
@@ -138,37 +136,37 @@ To make a prediction for a given user $a$ for item $i$, the first step is to mea
 \end{equation}
 where $r_{a,i}$ is the rating for the active user $a$ of item $i$ and $\bar{r}_a$ is their average rating, while $m$ is the set of items covered by either user.
 
-This similarity can then be used to predict the rating for the active user for item $i$
+This similarity can then be used to predict the rating for the active user for item $i$ as
 \begin{equation}
-    P_{a,i} = \bar{r}_a + \dfrac{\sum\limits_{u=1}^{n}[(r_{u,i}-\bar{r}_u)*w_{a,u}]}{\sum\limits_{u=1}^{n}w_{a,u}},
+    P_{a,i} = \bar{r}_a + \dfrac{\sum\limits_{u \in N(a)}w_{a,u}(r_{u,i}-\bar{r}_u)}{\sum\limits_{u \in N(a)}w_{a,u}},
 \end{equation}
-where $n$ is the number of neighbours used \parencite{herlocker2002empirical}.
+where $N(a)$ is the set of user $a$'s neighbours \parencite{herlocker2002empirical}.
 
 This approach was modified by \cite{shardanand1995social}, who used a constrained Pearson correlation coefficient, calculated as
 \begin{equation}
     w_{a,u} = \dfrac{\sum\limits_{i=1}^{m}[(r_{a,i}-4)(r_{u,i}-4)]}{\sqrt{\sum\limits_{i=1}^{m}(r_{a,i}-4)^2\sum\limits_{i=1}^{m}(r_{u,i}-4)^2}}.
 \end{equation}
-The value 4 was used as it was the midpoint of the seven-point rating scale on which their music recommender, dubbed "The Ringo", was based. The number of neighbours was limited by applying a correlation threshold, where only users above the threshold could be considered for membership to the neighbourhood. Increasing the magnitude of this threshold resulted in greater accuracy, but limits the number of items for which the system can make recommendations \parencite{herlocker2002empirical}.
+The value 4 was used as it was the midpoint of the seven-point rating scale on which their music recommendation system, dubbed "The Ringo", was based. The number of neighbours was limited by applying a correlation threshold, where only users above the threshold could be considered for membership to the neighbourhood. Increasing the magnitude of this threshold resulted in greater accuracy, but limits the number of items for which the system can make recommendations \parencite{herlocker2002empirical}.
 
 The most common alternative similarity measure to the Pearson correlation coefficient is the cosine similarity, which is calculated between users $a$ and $u$ as
 \begin{equation}
-    cos(a,u) = \dfrac{(a\cdot u)}{||a||u||},
+    \cos(r_a,r_u) = \dfrac{(r_a\cdot r_u)}{||r_a||\times||r_u||},
 \end{equation}
-Where $a$ and $u$ represent the ratings vectors for each user, considering only items which have been rated by both users \parencite{handbook_ch2}.
+where $a$ and $u$ represent the ratings vectors for each user, considering only items which have been rated by both users, $r_a\cdot r_u$ is the dot product of the two rating vectors and $||r_a||\times||r_u||$ is the product of their magnitudes \parencite{handbook_ch2}.
 
 This measure can then be used to make a prediction for user $a$ and item $i$ by selecting the $n$ most similar neighbours and taking an average of their rating of the item, weighted by their cosine similarity.
 
 Though the Pearson correlation and cosine similarity are the most popular measures used, it is possible to use any other common distance measure, such as the Euclidean or Minkowski distance \parencite{handbook_ch2}.
 
 \subsubsection{Item-based similarity}
-An alternative to neighbourhood models is to use an item-oriented approach, in which the known ratings of a user for similar items are used to make a prediction for a new item \parencite{cf_1.6_implicit}.
-
-When making a prediction for user $a$ and item $i$, all known ratings of the user are used as the neighbourhood. The predicted rating is taken as the average of all known ratings, weighted by their corresponding item similarity with $i$. The similarity measure for this neighbourhood can be any of the same measures as used in the user-based approach, only in this case the similarities are measured between items instead of users \parencite{handbook_1.4_neighbourhood}.
+An alternative to neighbourhood models is an item-oriented approach, in which the known ratings of a user for similar items are used to make a prediction for a new item \parencite{cf_1.6_implicit}. When making a prediction for user $a$ and item $i$, all known ratings of the user are used as the neighbourhood. The predicted rating is taken as the average of all known ratings, weighted by their corresponding item similarity with $i$. The similarity measure for this neighbourhood can be any of the same measures as used in the user-based approach, only in this case the similarities are measured between items instead of users \parencite{handbook_1.4_neighbourhood}.
 
 \subsection{Latent Factor Recommender Models}
 Latent factor models attempt to characterise both users and items using anywhere in the region of between 20 to 100 factors. These latent factors capture behavioural patterns between users and items in the ratings space \parencite{koren2009matrix}.
 
-The most common version of latent factor model is the matrix factorisation method, used by \cite{bellkor_2008} to win the Netflix Prize. In this approach, the user/item interaction data is represented as a matrix which is then factorised as the product of two smaller matrices. Figure \ref{fig:2_matrix-decomposition} shows the matrix representation of the explicit interactions between users and items. All blue values are known ratings submitted by users, while the white zeroes represent unknown values which need to be predicted.
+The most common version of latent factor model is the matrix factorisation (MF) method, used by \cite{bellkor_2008} to win the Netflix Prize. In this approach, the user/item interaction data is represented as a matrix which is then factorised as the product of two lower rank matrices. 
+
+Figure \ref{fig:2_matrix-decomposition} shows the matrix representation of the explicit interactions between users and items. All blue values are known ratings submitted by users, while the white zeroes represent unknown values which need to be predicted. Each row thus holds the ratings made by a particular user and each column the ratings received by a single item. The rating made by user $i$ of item $j$ can be found in the $j^{th}$ column of row $i$.
 
 \begin{figure}[H]
 \centering
@@ -178,7 +176,7 @@ The most common version of latent factor model is the matrix factorisation metho
 \label{fig:2_matrix-decomposition}
 \end{figure}
 
-If the ratings matrix consists of $m$ rows and $n$ columns, then any two matrices of dimensions $m$ x $d$ and $n$ x $d$ respectively, when cross multiplied together, would result in a matrix of the same dimensions as the original ratings matrix. The common dimension, $d$, is a hyperparameter which represents the number of latent factors \parencite{bailey_2016}.
+If the ratings matrix consists of $m$ rows and $n$ columns, then any two matrices of dimensions $m$ x $d$ and $n$ x $d$ respectively, when cross multiplied together, would result in a matrix of the same dimensions as the original ratings matrix. The common dimension, $d$, is a hyperparameter which represents the number of latent factors, where $d <= \min(m,n)$ \parencite{bailey_2016}.
 
 \begin{figure}[H]
 \centering
@@ -188,32 +186,37 @@ If the ratings matrix consists of $m$ rows and $n$ columns, then any two matrice
 \label{fig:factors}
 \end{figure}
 
-The two resulting latent factor matrices consist of vectors which describe both the users and the items respectively. For each user and item, there will be $d$ latent factors which represent their characteristics. In the case that the items are movies, the latent factors might represent known dimensions, like genres such as comedy or romance. They might also represent deeper dimensions, like dialogue style or the amount of satire. The latent factors might also represent completely uninterpretable dimensions too. In the case of users, the latent factors represent their partiality to the corresponding item latent factor \parencite{koren2009matrix}.
-
-To get the predicted rating for user $u$ and item $i$, one simply needs to take the dot product of row $u$ from the user matrix, $q$ with column $i$ of the item matrix, $p$, represented as
+To get the rating for the first user of the first movie, one takes the dot product of the first row of the user matrix with the first column of the item matrix. More generally, the rating made by user $i$ of item $j$ is calculated as
 
 \begin{equation}
-    \hat{r}_{ui} = q_i^T p_u.
+    \hat{r}_{ij} = p_i \cdot q_j^T,
 \label{eqn:dot_prod}
 \end{equation}
 
+where $p_i$ is the $i^{th}$ row of the user latent factor matrix and $q_j$ is the $j^{th}$ column of the item latent factor matrix.
+
 \subsubsection{Optimisation techniques}
-The two latent factor matrices that are used in the matrix factorisation approach need to be \textit{learned}. Their values can be solved through either stochastic gradient descent or alternating least squares (ALS). The ALS optimisation technique was the favoured approach taken by \cite{bellkor_2008}. This technique holds the values in one factor matrix fixed and then uses least squares to solve the values in the other and \textit{vice versa} \parencite{koren2009matrix}.
+The two latent factor matrices that are used in the MF approach need to be \textit{learnt}. Their values can be solved through either stochastic gradient descent or alternating least squares (ALS), optimising the minimal distance between the original ratings matrix and the reconstructed matrix. The ALS optimisation technique was the favoured approach taken by \cite{bellkor_2008}. This technique holds the values in one factor matrix fixed and then uses least squares to solve the values in the other and \textit{vice versa}. The converged solution provides the closest reconstruction of the original ratings matrix, with the missing values filled in \parencite{koren2009matrix}.
+
+The two resulting latent factor matrices consist of vectors which describe both the users and the items respectively. For each user and item, there will be $d$ latent factors which represent their characteristics. In the case that the items are movies, the latent factors might represent known dimensions, like genres such as comedy or romance. They might also represent deeper dimensions, like dialogue style or the amount of satire. The latent factors might also represent completely uninterpretable dimensions too. In the case of users, the latent factors represent their partiality to the corresponding item latent factor \parencite{koren2009matrix}.
+
+
+
 
 \subsubsection{Biases}
-The matrix factorisation approach may be extended to include biases which compensate for systematic tendencies across both users and items. For example, some users tend to rate all items higher (or lower) than average, and some items might be generally over-rated by all users \parencite{koren2009matrix}.
+The MF approach may be extended to include biases which compensate for systematic tendencies across both users and items. For example, some users tend to rate all items higher or lower than average, and some items might be generally over-rated by all users \parencite{koren2009matrix}.
 
 When incorporating biases, equation \ref{eqn:dot_prod} becomes
 \begin{equation}
-    \hat{r}_{ui} = \mu + b_u + b_i + q_i^T p_u,
+    \hat{r}_{ij} = \mu + b_i + b_j + p_u \cdot q_i^T,
 \label{eqn:dot_bias}
 \end{equation}
-where $\mu$ is the overall average rating and $b_u$ and $b_i$ are the user and item biases respectively.
+where $\mu$ is the overall average rating and $b_i$ and $b_j$ are the biases of user $i$ and item $j$.
 
 \subsubsection{Netflix Prize winning submission}
-The winning submission made use of an ensemble model, achieving an RMSE of 0.8712 on the test set using a combined total of over 500 models which included matrix factorisation, restricted Boltzmann machines and nearest neighbour models. Despite this extensive range of models used in their winning ensemble, the team members noted that the most accurate standalone approach was to use matrix factorisation \parencite{netflix_bellkor}. 
+The winning submission to the Netflix Prize made use of an ensemble model, achieving an RMSE of 0.8712 on the test set using a combined total of over 500 models which included MF, restricted Boltzmann machines and nearest neighbour models. Despite this extensive range of models used in their winning ensemble, the team members noted that the most accurate standalone approach was to use MF \parencite{netflix_bellkor}. 
 
-Aside from the choice of algorithm(s), the winning team paid special attention to what they termed "baseline predictors". The purpose of these was to "encapsulate those effects which do not involve user-item interaction." This method meant that predicted ratings were decomposed into multiple parts and is not dissimilar to how equation \ref{eqn:dot_bias} represents predicted ratings. In this equation, the first three terms can be considered baseline features, while the final term, $q_i^T p_u$, represents the specific user-item interaction. For example when predicting how a user, Alice, might rate the movie Inception, the prediction would first consider the average rating of the movie, as well as the average of all of Alice's ratings as the baseline predictors. Then, the specific user-item interaction is made using the latent features and is used to adjust the baseline prediction. In addition to user and item biases, temporal aspects were used to adjust the baseline. Factors such as time since a user's first rating and also how many ratings a user made on a particular day were found to have a significant impact on user ratings. To capture temporal effects, the user and item biases were each calculated as a function of time. 
+Aside from the choice of algorithm(s), the winning team paid special attention to what they termed "baseline predictors". The purpose of these was to "encapsulate those effects which do not involve user-item interaction." This method meant that predicted ratings were decomposed into multiple parts and is not dissimilar to how equation \ref{eqn:dot_bias} represents predicted ratings. In this equation, the first three terms can be considered baseline features, while the final term, $q_i^T p_u$, represents the specific user-item interaction. For example when predicting how a user, Alice, might rate the movie Inception, the prediction would first consider the average rating of the movie, as well as the average of all of Alice's ratings as the baseline predictors. Then, the specific user-item interaction is made using the latent features and is used to adjust the baseline prediction. In addition to user and item biases, temporal aspects were used to adjust the baseline. Factors such as time since a user's first rating and how many ratings a user made on a particular day were found to have a significant impact on user ratings. To capture temporal effects, the user and item biases were each calculated as a function of time. 
 
 When accounting for temporal components, equation \ref{eqn:dot_bias} becomes
 
@@ -225,7 +228,7 @@ When accounting for temporal components, equation \ref{eqn:dot_bias} becomes
 where $b_u$ and $b_i$ are functions that change over time \parencite{netflix_bellkor}.
 
 \subsection{Uses of deep learning in collaborative filtering}
-Tremendous effort was required from all of the contestants of the Netflix prize to push the boundaries of predictive ability in CF models. Ensemble models and intricate modelling of baseline predictors were used to eek out marginally better models; however, it was shown that the improvement in accuracy was largely due to the use of latent factors. Then, it was through the use of matrix decomposition that these latent factors were learned; however neural networks can perform the same task through the use of embedding layers.
+Tremendous effort was required from all of the contestants of the Netflix Prize competition to push the boundaries of predictive ability in CF models. Ensemble models and intricate modelling of baseline predictors were used to eek out marginally better models; however, it was shown that the improvement in accuracy was largely due to the use of latent factors. Then, it was through the use of matrix decomposition that these latent factors were learnt; however neural networks can perform the same task through the use of embedding layers, with the added ability of learning non-linear patterns in the data.
 
 The first notable use of deep learning for collaborative filtering was in \cite*{sedhain2015autorec}, when \citeauthor{sedhain2015autorec} used an autoencoder framework for their \textit{AutoRec} model. They opted for an item-based approach in which the input to the neural network is a partially observed vector containing all user ratings for a given item. Figure \ref{fig:autorec-arch} shows the architecture of this model.
 
@@ -233,13 +236,16 @@ The first notable use of deep learning for collaborative filtering was in \cite*
 \centering
 \includegraphics[width=8cm]{Figures/2_autoRec.png}
 \decoRule
-\caption[AutoRec]{AutoRec architecture \parencite{sedhain2015autorec}}
+\caption[AutoRec]{AutoRecu uses an autoencoder architecture  \parencite{sedhain2015autorec}}
 \label{fig:autorec-arch}
 \end{figure}
 
-It can be seen in figure \ref{fig:autorec-arch} that the input dimension of the AutoRec model is equal to the number of users, $n$. Since each input is sparse, only the parameters associated with the observed ratings are updated during backpropagation. This means that the trained model takes as input a sparse item ratings vector, representing all available user ratings for that item, and outputs a complete ratings vector containing all predicted user ratings for the item \parencite{sedhain2015autorec}.
+It can be seen in figure \ref{fig:autorec-arch} that the input dimension of the AutoRec model is equal to the number of users, $m$. There are $n$ copies of the network, one for each item. Since each input is sparse, only the parameters associated with the observed ratings are updated during backpropagation. This means that the trained model takes as input a sparse item ratings vector, representing all available user ratings for that item, and outputs a complete ratings vector containing all predicted user ratings for the item \parencite{sedhain2015autorec}.
 
-Evaluation of this model was done using the MovieLens 1M, 10M and Netflix datasets using 5 separate random 90\%-10\% train-test splits, with 10\% of the training data being used for hyperparameter tuning. Test accuracy was taken as the average of these 5 random splits and users or items in the test set without training observations were given a default rating of 3 stars. They reported test accuracies of 0.831, 0.782 and 0.823 on the MovieLens 1M, 10M and Netflix datasets respectively \parencite{sedhain2015autorec}. 
+Evaluation of this model was done using the MovieLens 1M, 10M and Netflix datasets using 5 separate random 90\%-10\% train-test splits, with 10\% of the training data being used for hyperparameter tuning. Test accuracy was taken as the average of these 5 random splits and users or items in the test set without training observations were given a default rating of 3 stars. They reported test accuracies of 0.831, 0.782 and 0.823 on the MovieLens 1M, 10M and Netflix datasets respectively \parencite{sedhain2015autorec}.
+
+Figure \ref{fig:autorec-arch} shows the item-based AutoRec model.
+\citeauthor{sedhain2015autorec} experimented with a user-based model, taking $n$-dimensional user rating vectors as inputs to $m$ copies of the network. However, they found this model achieved reduced accuracy, likely due to the fact that there are more items per movie than per user in the datasets they used.
 
 A neural architecture was used in the "Neural Collaborative Filtering" (NCF) model created by \cite{he2017neural}. This particular effort focused on the CF scenario where only implicit feedback is used; however, the architecture used is equally suited to using explicit feedback. Figure \ref{fig:ncf-arch} shows the architecture of a NCF model, with $X$ hidden units and $k$ latent factors.
 
@@ -251,8 +257,8 @@ A neural architecture was used in the "Neural Collaborative Filtering" (NCF) mod
 \label{fig:ncf-arch}
 \end{figure}
 
-The NCF model generalises matrix factorisation through the use of an embedding layer, which combines both user and item latent factors. The embedding layer serves the same purpose as the latent factor matrices in the MF approach, while the hidden layers allow for non-linear combinations of these latent factors when predicting ratings.
+The NCF model generalises MF through the use of an embedding layer, which combines both user and item latent factors. The embedding layer serves the same purpose as the latent factor matrices in the MF approach, while the hidden layers allow for non-linear combinations of these latent factors when predicting ratings.
 
 Although the results achieved by \citeauthor{sedhain2015autorec} represented an improvement of more than 5\% on the winning submission to the Netflix Prize, it should be noted that their method of evaluation on the Netflix set was not equivalent to the true holdout set used in the competition.
 
-Finally: \parencite{rendle2019difficulty}.
+Finally: \parencite{rendle2019difficulty} and \parencite{dacrema2019we}.
