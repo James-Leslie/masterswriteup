@@ -96,6 +96,7 @@ Figure \ref{fig:4_CGT-rating-layer} illustrates the addition baseline predictors
 The baseline predictors are not learned by the model, they are inherent in the ratings made by users of the system. The values of $b$ and $\mu$ are calculated before training the model using only the ratings from the training set. For any users or items that might appear in a holdout evaluation set but not the training set, the bias is assigned to be $\mu$.
 
 \subsection{Summary of rating model hyperparameters}
+Table \ref{tab:rating-hparams} summarises the tunable hyperparameters in the rating model. These hyperparameters were tuned and evaluated both with respect to their influence on the accuracy of the  rating model and the influence on the final genre prediction.
 \begin{table}[H]
 \centering
 \begin{tabular}{c | p{3.5cm} | c | c}
@@ -104,7 +105,7 @@ The baseline predictors are not learned by the model, they are inherent in the r
 \midrule
 $k$ & Number of latent factors in user and item latent factors & Discrete & (1, $\infty$) \\
 \midrule
-$h$ & Number of nodes in hidden layer & Discrete & (0, $\infty$)* \\
+$h$ & Number of nodes in hidden layer & Discrete & (0, $\infty$) \\
 \midrule
 $dr$ & Dropout rate in hidden layer & Continuous & (0, 1) \\
 \midrule
@@ -115,12 +116,14 @@ $f$ & Activation function in hidden layer & n/a & n/a \\
 \label{tab:rating-hparams}
 \end{table}
 
-\section{Genre prediction}
+The standard approach to hyperparameter tuning of rating models in the past has been to use 5-fold cross validation on 90\% of the available data, with the remaining 10\% used as a true holdout set for model evaluation. The ultimate goal of CGT is to predict genres using ratings as features. The process of training the rating model can thus be thought of as a feature engineering step. It is necessary to train the CGT rating model on all available rating data, to provide items with the most descriptive latent factor vectors.
 
-\subsection{Model architecture}
+\section{Genre model}
+The genre model is the second "head" of the CGT model. It re-uses the trained item embedding layer as its input layer and attempts to learn a mapping from embeddings to genres. The input layer has dimension $k$, following by a hidden layer with $j$ nodes. The output layer has as many nodes as the total number of genres with which the items have been labelled, $g$.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{Figures/4_genre-model.pdf}
+\includegraphics[width=0.8\textwidth]{Figures/4_genre-model.pdf}
 \decoRule
 \caption[Genre prediction model]{Genre prediction model re-uses the item embedding layer from the base ratings prediction model}
 \label{fig:4_genre-prediction-architecture}

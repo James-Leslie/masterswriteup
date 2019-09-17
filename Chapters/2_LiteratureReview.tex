@@ -200,9 +200,6 @@ The two latent factor matrices that are used in the MF approach need to be \text
 
 The two resulting latent factor matrices consist of vectors which describe both the users and the items respectively. For each user and item, there will be $d$ latent factors which represent their characteristics. In the case that the items are movies, the latent factors might represent known dimensions, like genres such as comedy or romance. They might also represent deeper dimensions, like dialogue style or the amount of satire. The latent factors might also represent completely uninterpretable dimensions too. In the case of users, the latent factors represent their partiality to the corresponding item latent factor \parencite{koren2009matrix}.
 
-
-
-
 \subsubsection{Biases}
 The MF approach may be extended to include biases which compensate for systematic tendencies across both users and items. For example, some users tend to rate all items higher or lower than average, and some items might be generally over-rated by all users \parencite{koren2009matrix}.
 
@@ -262,3 +259,20 @@ The NCF model generalises MF through the use of an embedding layer, which combin
 Although the results achieved by \citeauthor{sedhain2015autorec} represented an improvement of more than 5\% on the winning submission to the Netflix Prize, it should be noted that their method of evaluation on the Netflix set was not equivalent to the true holdout set used in the competition.
 
 Finally: \parencite{rendle2019difficulty} and \parencite{dacrema2019we}.
+
+\section{Transfer learning}
+The literature that has been reviewed in the previous sections of this chapter has covered the topic of recommender systems, with specific focus on tasks related to predicting explicit ratings using CF. While questions have been raised regarding the reproducibility of some results that claim to have improved on the state of the art, \parencite{dacrema2019we}, there can be no questioning the effectiveness of latent factor models for learning otherwise-unknown features of the user and item sets.
+
+The aim of this masters dissertation is to predict genre labels of items, such as movies or books, that have been rated explicitly by users. The prediction of genres requires latent features to be learnt through the task of predicting ratings. These latent features can then be re-used in a second model to predict genres. This process is named collaborative genre tagging (CGT) This process of adapting the learnings of one model in order to train another places CGT under the domain of transfer learning.
+
+\cite{ruder2019state} describes transfer learning as \textit{"a means to extract knowledge from a source setting and apply it to a different target setting"}. Its use has allowed for image classifiers to be created by fine tuning convolutional neural networks, achieving state-of-the-art performance in a wide variety of computer vision tasks while using significantly less data for training \parencite{sharif2014cnn}. Any machine learning scenario in which knowledge is gained from one task and re-used for another is considered transfer learning, as can be seen in figure \ref{fig:transfer-scenario}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Figures/2_transfer-learning-scenario.png}
+\decoRule
+\caption[Transfer Learning Scenario]{The transfer learning scenario \parencite{ruder2019state}}
+\label{fig:transfer-scenario}
+\end{figure}
+
+\cite{collobert2011natural} demonstrated the effectiveness of using word embeddings for a variety of natural language processing tasks. Word embeddings can be learned through trainable layers in a neural network that extract a set of features for each word. For each word, a set of features is stored in a lookup table. These features can be trained using unlabelled datasets, such as the entire corpus of the English Wikipedia. By removing words from sentences in the corpus, then training a language model to predict the missing word, the word embeddings can be trained such that they capture the syntactic and semantic information associated with the words themselves. These word embeddings can then be re-used in a sequence model to perform transfer learning on tasks such as sentiment analysis or part-of-speech tagging.
