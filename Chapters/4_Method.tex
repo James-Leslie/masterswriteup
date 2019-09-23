@@ -1,12 +1,15 @@
 \chapter{Methodology}
-This chapter details the methods used in this dissertation. Specifically, the focus is on collaborative genre tagging (CGT) - a two-step approach that applies collaborative filtering to predict genres of items such as movies or books. First, CGT is outlined and compared to more common uses of collaborative filtering on data sets such as MovieLens and Goodbooks. Then, the model architecture of CGT is detailed, along with the key hyperparameters to be tuned. Finally, the framework for hyperparameter tuning and model evaluation is described with special attention given to the reproducibility of results.
+This chapter details the methods used in this dissertation. Specifically, the focus is on collaborative genre tagging (CGT) - a sequential transfer learning approach that applies collaborative filtering to predict genres of items such as movies or books. First, CGT is outlined and compared to more common uses of collaborative filtering on data sets such as MovieLens and Goodbooks. Then, the model architecture of CGT is detailed, along with the key hyperparameters to be tuned. Finally, the framework for hyperparameter tuning and model evaluation is described with special attention given to the reproducibility of results.
 
 \section{Collaborative genre tagging}
-Most of the previous work on collaborative filtering (CF) tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in CF datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers. 
+Most of the previous work on collaborative filtering (CF) tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in CF datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers.
 
-CF models, by definition, do not make use of meta data for predicting user preferences -- this is the domain of content-based models. However, meta data such as item genres are still useful to users for assessing recommendations provided to them. Users cannot be expected to trust recommendations provided to them, without having some sort of description of the recommended item. While CF has shown its ability to provide recommendations to users without using content attributes, descriptive features are still useful for users to make informed decisions on \textit{which} recommendations to choose.
-
-In this Master's dissertation, a new application of CF for predicting item genres from explicit user ratings is explored, dubbed collaborative genre tagging, or CGT. This method uses a two-headed architecture which shares a common embedding layer. The first head of the model is used to train the embedding layer, while the second head is used to learn how to predict item genres from trained embedding weights. Figure \ref{fig:4_CGT-architecture} shows the connected architecture of the CGT model.
+\begin{itemize}
+    \item talk about the concept of similar users liking similar things and similar rating patterns also being indicative of genres
+    \item make a picture of the underlying concept of CGT, like the one in the intro chapter
+    \item introduce the CGT, "sequential transfer learning application of CF for genre prediction..."
+    \item make a picture of the transfer learning concept of CGT like Ruder's diagram
+\end{itemize}
 
 \begin{figure}[H]
 \centering
