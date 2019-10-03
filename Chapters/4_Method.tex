@@ -74,12 +74,12 @@ The network as it is shown in figure \ref{fig:4_CGT-hidden-layer} does not inclu
 
 A similar approach has been taken in the CGT model, which adjusts the model output through the addition of the global mean rating, $\mu$, and a specific user-item baseline prediction, $b_{ui}$. This adjustment is illustrated in figure \ref{fig:4_CGT-rating-layer}. 
 
-To calculate the baseline prediction for any user-item combination, one needs to calculate the average biases for both the user and the item. The bias for a user, $u$, is calculated as 
+To calculate the baseline prediction for any user-item combination, one needs to calculate the average biases for both the user and the item. The bias for a user, $b_u$, is calculated as 
 \begin{equation}
-    b_{u} = \dfrac{\sum_{j=1}^{n_u} (r_{uj})}{n_u} - \mu,
+    b_{u} = \dfrac{\sum_{j=1}^{n_u} (r_{uj} - \mu_i)}{n_u},
 \label{eqn:CGT-user-bias}
 \end{equation}
-which is the average amount by which user $u$'s ratings differ from the global average rating across all users and items, $\mu$.
+which is the average amount by which user $u$'s rating differs from the average rating of an item, $\mu_i$.
 
 Similarly, the bias for an item, $i$, is thus
 \begin{equation}
@@ -159,6 +159,52 @@ $f2$ & Activation function in hidden layer & n/a & n/a \\
 \end{table}
 
 \section{Tuning and evaluation framework}
-The standard approach to hyperparameter tuning of rating models in the past has been to use 5-fold cross validation on 90\% of the available data, with the remaining 10\% used as a true holdout set for model evaluation.
+The standard approach to hyperparameter tuning of rating models in the past has been to use 5-fold cross validation on 90\% of the available data, with the remaining 10\% used as a true holdout set for model evaluation. This same approach was used for the genre prediction step; however, the rating model was trained on all available data to get the most descriptive latent factors in the embedding layer.
 
-For CGT, both models will be trained in one sequence, with the accuracy of predicted genres used as the evaluative measure. All user-item ratings will be used in training the first model; however, 10\% of the genre labels will be used as a holdout set and the remaining 90\% will be used for 5-fold cross validation hyperparameter tuning.
+\subsection{Order of operations}
+CGT is a sequential transfer learning task, therefore the two models need to be trained in sequence. The order of training, tuning and assessing the CGT model is as follows:
+
+\begin{enumerate}
+  \item Train rating model
+  \begin{enumerate}
+    \item Tune hyperparameters of rating model using cross validation
+    \item Train rating model on all rating data using best hyperparameters
+  \end{enumerate}
+  \item Train genre model
+  \begin{enumerate}
+    \item Remove 10\% of genre dataset to use as a holdout set for testing
+    \item Tune hyperparameters of rating model using cross validation on remaining 90\%
+    \item Train rating model on all rating data using best hyperparameters
+  \end{enumerate}
+  \item Evaluate genre model using 10\% holdout set
+\end{enumerate}
+
+\subsection{Cross validation}
+First, the hyperparameters of the rating model were tuned using 5-fold cross validation. In each fold, 80\% of the ratings were used to train the model and the remaining 20\% was used for validation. Figure \ref{fig:4_cross-validation} illustrates the concept of cross validation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Figures/4_cross-validation.pdf}
+\decoRule
+\caption[Cross validation folds]{Cross validation with 5 folds. Each fold is split into 80\% training data (green) and 20\% testing data (orange)}
+\label{fig:4_cross-validation}
+\end{figure}
+
+For a given configuration of the model, 5 separate instances of training need to be performed, using a different fold each time. The model is then evaluated by taking the average holdout performance across the 5 folds. Training in this way allows for a more robust measure of performance than a single 80/20 split, while enabling the use of all available data for training.
+
+\subsection{Grid search}
+The best combination of hyperparameters was chosen using a Cartesian grid search, in which a separate model was trained using every possible combination of hyper parameters was trained and validated on each of the 5 folds. The model with the best average holdout performance across the 5 folds was chosen as the best performer and its hyperparameters were then used to train a rating model on all of the available data.
+
+After training the rating model, the item embedding layer was frozen and used in the genre model. This model does used a second dataset, containing all items and their corresponding genre labels. Hyperparameter tuning for the genre model was done in the same way as the rating model, with the exception that 10\% of the items were removed from the dataset \textit{before} creating the 5 cross validation folds. This is illustrated in figure \ref{fig:4_cross-validation-2}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Figures/4_cross-validation-2.pdf}
+\decoRule
+\caption[Holdout set]{For the genre model, 10\% of the items (blue) are removed from the dataset \textit{before} performing cross validation}
+\label{fig:4_cross-validation-2}
+\end{figure}
+
+After removing the 10\% holdout set, a Cartesian grid search was used with 5 fold cross validation to tune the genre model hyperparameters. The best model was chosen based on its holdout performance in the cross validation and the final assessment of its performance was then made using the 10\% holdout set.
+
+The results of hyperparameter tuning and evaluation are detailed in the next chapter.
