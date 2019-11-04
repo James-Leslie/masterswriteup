@@ -1,8 +1,8 @@
- n123\chapter{Methodology}
-This chapter details the methods used in this dissertation. Specifically, the focus is on collaborative genre tagging (CGT) - a sequential transfer learning approach that applies collaborative filtering to predict genres of items such as movies or books. First, CGT is outlined and compared to more common uses of collaborative filtering on data sets such as MovieLens and Goodbooks. Then, the model architecture of CGT is detailed, along with the key hyperparameters to be tuned. Finally, the framework for hyperparameter tuning and model evaluation is described with special attention given to the reproducibility of results.
+\chapter{Methodology}
+This chapter details the methods used in this dissertation. Specifically, the focus is on collaborative genre tagging (CGT) - a sequential transfer learning approach that applies collaborative filtering to predict genres of items such as movies or books. First, CGT is outlined and compared to more common uses of collaborative filtering on datasets such as MovieLens and Goodbooks. Then, the model architecture of CGT is detailed, along with the key hyperparameters to be tuned. Finally, the framework for hyperparameter tuning and model evaluation is described.
 
 \section{Collaborative genre tagging}
-Most of the previous work on collaborative filtering (CF) tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in CF datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in successive hidden layers.
+Most of the previous work on collaborative filtering (CF) tackled the problem of predicting user preferences using their interaction history. The most successful methods all involve the use of latent factor models which are capable of learning otherwise hidden properties in the users and items in CF datasets. Recently this type of approach has been adapted from matrix factorisation models to neural architectures which capture latent factors in embedding layers, while allowing for non-linearity in fully connected hidden layers.
 
 The general idea behind CF is that users with similar preferences will provide similar ratings for a given movie. The idea behind CGT is that similar movies will be rated similarly by users who share a preference for that type of movie. This concept is illustrated in figure \ref{fig:4_CGT-concept}. Just as user ratings patterns have been used to infer user preferences, they can also be used to infer information about the items being rated by users.
 
@@ -17,9 +17,9 @@ The general idea behind CF is that users with similar preferences will provide s
 CGT involves two distinct learning tasks, which are:
 \begin{enumerate}
     \item learn user and item latent factors through the task of predicting user-item ratings, and
-    \item learn a mapping from item latent factors to genres
+    \item learn to decode item latent factors to genres.
 \end{enumerate}
-The neural architectures associates with each of the tasks listed above are shown in figure \ref{fig:4_CGT-architecture}. The first model uses latent factors to predict user ratings and is similar in design to the Neural Collaborative Filtering model used by \citeauthor{he2017neural} (the architecture of which is shown in figure \ref{fig:ncf-arch}). The purpose of this model is to train the embedding layer to produce latent factors associated with every item in the ratings dataset.
+The neural architectures associated with each of the tasks listed above are shown in figure \ref{fig:4_CGT-architecture}. The first model uses latent factors to predict user ratings and is similar in design to the Neural Collaborative Filtering model used by \citeauthor{he2017neural} (the architecture of which is shown in figure \ref{fig:ncf-arch}). The purpose of this model is to train the embedding layer to produce latent factors associated with every item in the ratings dataset.
 
 \begin{figure}[H]
 \centering
@@ -29,7 +29,7 @@ The neural architectures associates with each of the tasks listed above are show
 \label{fig:4_CGT-architecture}
 \end{figure}
 
-The second model uses the embedding layer of the first, with a hidden layer used to learn a mapping from item latent factors to genres. The models are trained sequentially, with the embedding layer being frozen when training the second model.
+The second model uses the embedding layer of the first, with a hidden layer used to decode item latent factors to genres. The models are trained sequentially, with the shared embedding layer being frozen when training the second model.
 
 \section{Rating model}
 \label{section:rating-model}
@@ -44,7 +44,7 @@ The rating model is the base of the CGT model. The input to this model is a user
 \end{figure}
 
 \subsection{Embedding layer}
-The first layer of the rating model is a concatenated embedding layer. This layer is comprised of two separate embedding matrices, the same as those used in the matrix factorisation method popularised by \citeauthor{koren2009matrix}. These embedding matrices hold the latent factors of all users and items respectively. The user matrix is of dimension $m\times k$ while the item matrix is $n\times k$, where $m$ and $n$ are the number of distinct users and items respectively, and $k$ is the number of latent factors.
+The first layer of the rating model is a concatenated embedding layer. This layer is comprised of two separate embedding matrices, the same as those used in the matrix factorisation method popularised by \citeauthor{koren2009matrix}. These embedding matrices hold the latent factors of all users and items respectively. The user matrix is of dimension $m\times k$ while the item matrix is $n\times k$, where $m$ and $n$ are the number of distinct users and items respectively, and $k$ is the number of latent factors. Figure \ref{fig:4_CGT-embedding-layer} illustrates the combination of latent factor matrices to form the concatenated embedding layer.
 
 \begin{figure}[H]
 \centering
@@ -57,7 +57,7 @@ The first layer of the rating model is a concatenated embedding layer. This laye
 The embedding layer is the input layer of the model, which takes a user-item ID pair as its input. Each of these IDs is passed to its respective embedding matrix (step 2 in figure \ref{fig:4_CGT-embedding-layer}) as a lookup to obtain two $k$-dimensional latent factor vectors. These two latent factor vectors are then concatenated together to form the first layer of the neural network. Since each latent factor vector is of length $k$, the concatenated first layer is of dimension $k\times2$. The size of $k$ is a hyperparameter which will need to be tuned.
 
 \subsection{Hidden layer}
-The concatenated embedding layer feeds forward into the fully connected hidden layer of the model with $h$ nodes. This hidden layer allows for the model to learn non-linear patterns in the concatenated latent factor vector through the addition of activation functions. It is this non-linearity in the hidden layer that distinguishes the CGT rating model from vanilla matrix factorisation. During training of the model, dropout may also be added to this layer as a means of regularization. The number of nodes in this layer, the choice of activation function and the dropout rate are all hyperparameters that will need to be tuned.
+The concatenated embedding layer feeds forward into the fully connected hidden layer of the model with $h$ nodes. This hidden layer allows for the model to learn non-linear patterns in the concatenated latent factor vector through the addition of activation functions. It is this non-linearity in the hidden layer that distinguishes the CGT rating model from vanilla matrix factorisation. During training of the model, dropout may also be added to this layer as a means of regularization. The number of nodes in this layer, the choice of activation function and the dropout rate are all hyperparameters that will need to be tuned. Figure \ref{fig:4_CGT-hidden-layer} shows the overall architecture of the rating model.
 
 \begin{figure}[H]
 \centering
@@ -68,7 +68,7 @@ The concatenated embedding layer feeds forward into the fully connected hidden l
 \end{figure}
 
 \subsection{Output layer}
-Figure \ref{fig:4_CGT-hidden-layer} shows the full architecture of the rating model. As discussed in section \ref{section:rating-model}, the model takes two inputs: a user and an item ID. The output of the model is a predicted rating of what the input user is expected to rate the input movie. 
+As discussed in section \ref{section:rating-model}, the model takes two inputs: a user and an item ID. The output of the model is a predicted rating of what the input user is expected to rate the input movie. 
 
 The network as it is shown in figure \ref{fig:4_CGT-hidden-layer} does not include any adjustments for user or item biases of any kind. \citeauthor{koren2009matrix} stated that \textit{"much of the observed variation in rating values is due to effects associated with either users or items, known as biases or intercepts, independent of any interactions."} To handle biases inherent in rating data, they adjusted their matrix factorisation model as described in equation \ref{eqn:dot_bias}.
 
@@ -94,6 +94,8 @@ Then $b_{ui}$ is calculated as the average between the bias of user $u$ and item
 \label{eqn:CGT-baseline}
 \end{equation}
 
+The addition of $b$ and $u$ to the output allows the model to identify the portion the rating that can be identified by biases and subjects only the "true interaction" portion of the data to the embedding and hidden layers. Figure \ref{fig:4_CGT-rating-layer} illustrates the addition baseline predictors to the CGT rating model.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{Figures/4_CGT-output-layer.pdf}
@@ -102,12 +104,10 @@ Then $b_{ui}$ is calculated as the average between the bias of user $u$ and item
 \label{fig:4_CGT-rating-layer}
 \end{figure}
 
-Figure \ref{fig:4_CGT-rating-layer} illustrates the addition baseline predictors to the CGT rating model. The addition of $b$ and $u$ to the output allows the model to identify the portion the rating that can be identified by biases and subjects only the "true interaction" portion of the data to the embedding and hidden layers.
-
 The baseline predictors are not learned by the model, they are inherent in the ratings made by users of the system. The values of $b$ and $\mu$ are calculated before training the model using only the ratings from the training set. For any users or items that might appear in a holdout evaluation set but not the training set, the bias is assigned to be $\mu$.
 
 \subsection{Summary of rating model hyperparameters}
-Table \ref{tab:rating-hparams} summarises the tunable hyperparameters in the rating model. These hyperparameters were tuned and evaluated both with respect to their influence on the accuracy of the  rating model and the influence on the final genre prediction.
+Table \ref{tab:rating-hparams} summarises the tunable hyperparameters in the rating model. These hyperparameters were tuned and evaluated with respect to their influence on the accuracy of the final genre prediction.
 \begin{table}[H]
 \centering
 \begin{tabular}{c | p{3.5cm} | c | c}
@@ -128,9 +128,9 @@ $f1$ & Activation function in hidden layer & n/a & n/a \\
 \end{table}
 
 \section{Genre model}
-The genre model is the second "head" of the CGT model. It re-uses the trained item embedding layer as its input layer and attempts to learn a mapping from embeddings to genres. The input layer has dimension $k$, following by a hidden layer with $j$ nodes. The output layer has as many nodes as the total number of genres with which the items have been labelled, $g$.
+The genre model is the second "head" of the CGT model. It re-uses the trained item embedding layer as its input layer and attempts to learn to decode latent factors to genres. The input layer has dimension $k$, following by a hidden layer with $j$ nodes. The output layer has as many nodes as the total number of genres with which the items have been labelled, $g$.
 
-The purpose of this model is to learn how to interpret the latent factors that have been learnt by the first model; it learns to translate the latent feature space into a defined genres, commonly used by people to summarise items.
+The purpose of this model is to learn how to interpret the latent factors that have been learnt by the first model; it learns to translate the latent feature space into a defined genre label, commonly used by people to describe items.
 
 \begin{figure}[H]
 \centering
@@ -177,7 +177,7 @@ Tuning the hyperparameters of the two models was done using a grid search, in wh
 The order of operations for the grid search is outlined below:
 
 \begin{enumerate}
-  \item For every chosen combination of hyperparameters:
+  \item For every given combination of hyperparameters:
   \begin{enumerate}
     \item Train rating model on all rating data
     \item Freeze item embedding layer
@@ -185,7 +185,7 @@ The order of operations for the grid search is outlined below:
     \item Train and assess genre model on each CV fold
     \item Record performance as average validation loss across all folds
   \end{enumerate}
-  \item Choose best performing model
+  \item Choose best performing combination of hyperparameters
 \end{enumerate}
 
 A separate model was trained using every possible combination of hyperparameters and validated on each of the 5 folds. The rating model was trained on all data, before the item embedding layer was frozen and used in the genre model. The model with the best average holdout performance across the 5 folds was chosen as the best performer.
