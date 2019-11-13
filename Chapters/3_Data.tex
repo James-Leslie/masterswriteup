@@ -1,12 +1,13 @@
-\chapter{Datasets}
-This chapter provides an overview of the four datasets used in this Master's dissertation, all of which contain explicit ratings made by users across various item sets. Three of the datasets contain movie ratings, while the other contains ratings of books.
+\chapter{Data Description}
+This chapter provides an overview of the four datasets used in this minor dissertation, all of which contain explicit ratings made by users across various item sets. Three of the datasets contain movie ratings, while the other contains ratings of books.
 
-The MovieLens datasets are used frequently in CF research efforts. GroupLens research at the university of Minnesota is responsible for maintaining these data in four stable sets of different sizes: 100k, 1M, 10M and 20M. For the purposes of this research, the 20M was not necessary and so only the first three were used. Each set is named after the number of ratings it contains. The first two datasets use a 5 star, integer-only rating scale, while the 10M and 20M datasets each contain ratings from 0.5 - 5 stars, including half star ratings \parencite{harper2016movielens}.
+\section{Datasets}
+The MovieLens (ML) datasets are used frequently in CF research efforts. GroupLens research at the University of Minnesota is responsible for maintaining these data in four stable sets, each containing a different number of ratings: 100k (100 thousand ratings),  1M (1 million ratings), 10M (10 million ratings) and 20M (20 million ratings).  Training on the 20M dataset was very computationally intensive 20M and so only the first three were used. The first two datasets use a 5 star, integer-only rating scale, while the 10M and 20M datasets each contain ratings from 0.5 -- 5 stars, in increments of a half \parencite{harper2016movielens}.
 
-The goodbooks-10k dataset takes its name after the fact that it contains 10 000 books, with a total of just under 6 million ratings made by over 50 000 users \parencite{goodbooks2017}.
+The Goodbooks-10k dataset contains 10 thousand books, with a total of just under 6 million ratings made by over 50 thousand users \parencite{goodbooks2017}.
 
-\section{Number of users, items and ratings}
-Each dataset has a different profile in terms of the ratios between numbers of users, items and ratings. The \textbf{density} is calculated as the number of ratings provided as a proportion of the total number of possible user-item interactions. ML 100k -- the dataset with the fewest ratings -- has 943 unique users and 1 682 unique movie titles. This would allow a total of 1 586 126 possible user-movie ratings. Since there are only 100 000 ratings in this dataset, its density is thus $\dfrac{100000}{1586126} = 6.30\%$. Table \ref{tab:data-summary} provides a summary of the four datasets.
+\section{Number of Users, Items and Ratings}
+Each dataset has a different profile in terms of the ratios between numbers of users, items and ratings. The \textbf{density} is calculated as the number of ratings provided as a proportion of the total number of possible user-item interactions. ML 100k -- the dataset with the fewest ratings -- has 943 unique users and 1 682 unique movie titles. This would allow a total of 1 586 126 possible user-movie ratings. Since there are only 100 000 ratings in this dataset, its density is thus $100000/1586126 = 6.30\%$. Table \ref{tab:data-summary} provides a summary of the four datasets.
 
 \begin{table}[H]
 \centering
@@ -24,11 +25,11 @@ Goodbooks-10k & 1--5, stars & 53 424 & 10 000 & 5 976 479 & 1.12\% \\
 \label{tab:data-summary}
 \end{table}
 
-ML 100k, 1M and the goodbooks-10k sets all use an integer rating scale between 1 and 5 stars. The ML 10M set also uses a 5 star scale, but allows half star ratings.
+ML 100k, 1M and the Goodbooks-10k sets all use an integer rating scale between 1 and 5 stars. The ML 10M set also uses a 5 star scale, but allows half star ratings.
 
-In terms of size, ML 100k is the smallest with 100 thousand ratings, while the other sets all range between 1 and 10 million ratings. ML 10M contains the most items, albeit only by a slight margin over goodbooks-10k.
+In terms of size, ML 100k is the smallest with 100 thousand ratings, while the other sets all range between 1 and 10 million ratings. ML 10M contains the most items, albeit only by a slight margin over Goodbooks-10k.
 
-\section{Distribution of ratings}
+\section{Distribution of Ratings}
 Table \ref{tab:ratings-distribution} provides a summary of the distribution of ratings across users and items in each of the datasets.
 
 All three MovieLens datasets have a minimum of 20 ratings per user, while some of the movies have only 1 rating.
@@ -51,7 +52,7 @@ Goodbooks-10k & 19 & 200 & 112 & 8 & 22 806 & 598 \\
 \label{tab:ratings-distribution}
 \end{table}
 
-\subsection{Number of ratings per user}
+\subsection{Number of Ratings per User}
 All three MovieLens datasets have a similar right-tailed distribution of the number of ratings made per user. The majority of users have made a small number of ratings -- between 1 and 100 -- with a small number of users having rated a very high number of movies.
 
 The Goodbooks-10k dataset user ratings follow a bell-shaped distribution, with the majority of users having rated between 75 and 130 books. No user has rated fewer than 19, or more than 200, books.
@@ -72,12 +73,12 @@ The histograms in figures \ref{fig:ML10M-users} and \ref{fig:goodbooks-users} sh
 \label{fig:goodbooks-users}
 \end{figure}
 
-\subsection{Number of ratings per item}
+\subsection{Number of Ratings per Item}
 The number of ratings per movie in the MovieLens datasets follow a similar right-tailed distribution to the number of ratings per user; however, since there are fewer movies than users, the average number of ratings per movie is higher.
 
-The number of ratings per book in the Goodbooks-10k dataset does not follow a normal distribution, as is the case with ratings per user. Instead, the number of ratings per book in this dataset follows a similar right-tailed pattern to the MovieLens datasets.
+The number of ratings per book in the Goodbooks-10k dataset does not follow a symmetric distribution, as is the case with ratings per user. Instead, the number of ratings per book in this dataset follows a similar right-tailed pattern to the MovieLens datasets.
 
-Figures \ref{fig:ML10M-items} and \ref{fig:goodbooks-items} show the distributions of the number of ratings per item in the ML 10M and Goodbooks-10k datasets respecitvely. As is the case with the distributions of the number of ratings per user, the three MovieLens datasets all have similar distributions across number of ratings per item and so only the largest of the datasets is shown below.
+Figures \ref{fig:ML10M-items} and \ref{fig:goodbooks-items} show the distributions of the number of ratings per item in the ML 10M and Goodbooks-10k datasets respectively. As is the case with the distributions of the number of ratings per user, the three MovieLens datasets all have similar distributions across number of ratings per item and so only the largest of the datasets is shown below.
 
 \begin{figure}[H]
 \centering
@@ -93,7 +94,7 @@ Figures \ref{fig:ML10M-items} and \ref{fig:goodbooks-items} show the distributio
 \label{fig:goodbooks-items}
 \end{figure}
 
-\subsection{Rating scales}
+\subsection{Rating Scales}
 In all of the datasets, the data are skewed in favour of positive ratings. For example, MovieLens 100k uses a 5-point integer-only rating scale. The middle value of this scale is 3 stars out of 5; however, the mean user rating is 3.53 and the median is 4. In each of the four datasets, both the median and mean values are higher than the middle point of the respective rating scale. Table \ref{tab:ratings-5-number-summaries} shows the 5-number summaries of each dataset.
 
 \begin{table}[H]
@@ -112,8 +113,8 @@ Goodbooks-10k & 1 & 3 & 4 & 5 & 5 & 3.92 \\
 \label{tab:ratings-5-number-summaries}
 \end{table}
 
-\section{Distribution of genres}
-All MovieLens datasets, as well as Goodbooks-10k, include item metadata. In the case of MovieLens, movies have been tagged with at least one of a total of 18 genres. Books in Goodbooks-10k have been tagged with at least one of 10 genres. Since the items in all four of these datasets may be labelled with one or more genres simultaneously, attempting to predict their genres is considered a multi-label classification problem.
+\section{Distribution of Genres}
+All MovieLens datasets, as well as Goodbooks-10k, include item meta data. In the case of MovieLens, movies have been tagged with at least one of a total of 18 genres. Books in Goodbooks-10k have been tagged with at least one of 10 genres. Since the items in all four of these datasets may be labelled with one or more genres simultaneously, attempting to predict their genres is considered a multi-label classification problem.
 
 Table \ref{tab:ML-genres} shows the 18 genre categories used in the MovieLens datasets, as well as the proportion of movies that were assigned that genre.
 
@@ -147,4 +148,4 @@ Western & 0.016 & 0.018 & 0.026 \\
 \label{tab:ML-genres}
 \end{table}
 
-From table \ref{tab:ML-genres}, one can see that most of the genres suffer from a significant class imbalance. The drama class is the most balanced, with half of the movies in ML10M being labelled with this genre. The second most well-balanced class is that of comedy, with 35\% of the movies in ML10M being labelled with this genre.
+From table \ref{tab:ML-genres}, one can see that genre is highly unbalanced. Of all the categories, drama has the greatest representation, with half of the movies in ML10M falling under this genre. The second most well-represented category is that of comedy, with 35\% of the movies in ML10M falling under this genre.

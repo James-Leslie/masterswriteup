@@ -3,7 +3,7 @@
 
 This chapter details the results of tuning and evaluating the CGT model. All available user-item ratings were used to tune the rating model, while 90\% of the movie genre labels were used to train and tune the genre model. Only the "drama" label was used in the MovieLens datasets, as it was the most evenly balanced class. Goodbooks-10k used only the "adult-fiction" label, which had very close to 50/50 class weighting. The chapter concludes with an exploratory analysis of the item latent factors.
 
-\section{Hyperparameter grid search}
+\section{Hyperparameter Grid Search}
 A number of grid searches were performed to tune the hyperparameters of the CGT model. Due to the different sizes of the MovieLens (ML) datasets, the smallest dataset, ML100k, was used to test the widest range of hyperparameters. Then, a subset of the best-performing hyperparameters were tested again on the ML1M dataset. No hyperparameter tuning was done on ML10M due to its size. The best hyperparameters from ML1M were used for ML10M and GB10k.
 
 In each grid search, the best parameters were chosen as those which minimised the average CV log loss of the genre classifications.
@@ -13,7 +13,7 @@ When initialising weights of each model, the same random seed was used to allow 
 \subsection{MovieLens100k}
 Four grid searches were performed on the ML100k dataset. The first grid search tested various combinations of $k$ -- the number of latent factors, $h$ -- the number of hidden nodes in the rating model, and $j$ -- the number of hidden nodes in the genre model. The second grid search tested different numbers of training epochs and the third tested different values of $dr1$ and $dr2$ -- the dropout rate in the hidden layers of each model. Finally, a number of different activation functions were tested. Each successive hyperparameter search used the best set of hyperparameters from the previous.
 
-\subsubsection{Number of latent factors and hidden neurons}
+\subsubsection{Number of Latent Factors and Hidden Neurons}
 Values between 50 and 200 were tested for $k$, while $h$ and $j$ were tested in the range of 25 and 100. While tuning these parameters, the dropout rate of the hidden layers, $dr1$ and $dr2$ were both fixed at 0.2 and ReLU was used as the activation function. A total of 12 different combinations were tested in this grid search, the top 5 models are shown in table \ref{tab:ml100k-grid-results1}.
 
 \begin{table}[H]
@@ -47,7 +47,7 @@ The best performing set of hyperparameters in the first grid search was $k=200$,
 \label{fig:5-latent-size}
 \end{figure}
 
-\subsubsection{Number of epochs}
+\subsubsection{Number of Epochs}
 Training the model for too many epochs could risk overfitting. Therefore, it was necessary to find the optimal number of epochs for both the rating and genre model. Values of 5, 6 and 7 were tested for the rating model, while values of 3, 4 and 5 were tested for the genre model. This meant a total of 9 different combinations were tested in this grid search, with each one using the hyperparameters $k$, $h$ and $j$ from the best performing model in the first grid search. The top 5 models are shown in table \ref{tab:ml100k-grid-results2}. $E1$ and $E2$ are the number of epochs used for the rating and genre model respectively.
 
 \begin{table}[H]
@@ -71,7 +71,7 @@ Training the model for too many epochs could risk overfitting. Therefore, it was
 \label{tab:ml100k-grid-results2}
 \end{table}
 
-\subsubsection{Dropout rates}
+\subsubsection{Dropout Rates}
 The third grid search tested different combinations of dropout rates used in the hidden layers of the two models. Values between 0.15 and 0.25 were tested. A total of 9 different combinations were tested in this grid search. The top 5 models from the third grid search are shown in table \ref{tab:ml100k-grid-results3}.
 
 \begin{table}[H]
@@ -97,7 +97,7 @@ The third grid search tested different combinations of dropout rates used in the
 
 The best performing model used a higher dropout rate of 0.25 in the rating model, compared to 0.15 in the genre model.
 
-\subsubsection{Activation function}
+\subsubsection{Activation Function}
 Finally, five different activation functions were tested using the best parameters from the first three grid searches. The five activation functions used were:
 \begin{itemize}
     \item Linear
@@ -132,7 +132,7 @@ Linear & 0.6500 & 59.42 \\
 \subsection{MovieLens1M}
 A second set of grid searches was performed on MovieLens1M, using a subset of the best performing values tested on MovieLens100k. The parameters tested on ML1M included the number of latent factors, number of hidden neurons, number of training epochs, and the dropout rates. The ReLU activation function was chosen for this dataset, as it was significantly better than the other four that were tested on ML100k.
 
-\subsubsection{Number of latent factors and hidden neurons}
+\subsubsection{Number of Latent Factors and Hidden Neurons}
 Values of 100 and 200 were tested for $k$, while $h$ and $j$ were tested between 50 and 100. This totalled 8 different combinations, of which the top 5 models are shown in table \ref{tab:ml1m-grid-results1}.
 
 \begin{table}[H]
@@ -158,7 +158,7 @@ Values of 100 and 200 were tested for $k$, while $h$ and $j$ were tested between
 
 As was the case with ML100k, the best values for $k$, $h$ and $j$ for ML1M were 200, 100 and 100 respectively.
 
-\subsubsection{Number of epochs}
+\subsubsection{Number of Epochs}
 Values of 7 and 8 were tested for $E1$ and 5, 6 and 7 were tested for $E2$. The top 5 combinations of $E1$ and $E2$ are shown in table \ref{tab:ml1m-grid-results2}.
 
 \begin{table}[H]
@@ -182,7 +182,7 @@ Values of 7 and 8 were tested for $E1$ and 5, 6 and 7 were tested for $E2$. The 
 \label{tab:ml1m-grid-results2}
 \end{table}
 
-\subsubsection{Dropout rates}
+\subsubsection{Dropout Rates}
 The same values of $d1$ and $d2$ that were tested on ML 100k were tested again on this dataset, the results are shown below in table \ref{tab:ml1m-grid-results3}.
 
 \begin{table}[H]
@@ -208,10 +208,10 @@ The same values of $d1$ and $d2$ that were tested on ML 100k were tested again o
 
 Unlike the ML100k grid search, lower dropout rates yielded the lowest CV loss on ML1M. A value of 0.15 used as the dropout rate in both the rating and genre model resulted in the best performing model.
 
-\section{Holdout testing}
+\section{Holdout Testing}
 After tuning hyperparemeters, CGT was tested against the 10\% holdout set for each of the three MovieLens datasets and the Goodbooks-10k dataset. For ML10M and Goodbooks-10k, the model was trained on 90\% of the data, using the best hyperparameters from the ML1M model, i.e. without tuning any hyperparameters.
 
-\subsection{Classification metrics}
+\subsection{Classification Metrics}
 Performance on the holdout set was evaluated using four different classification metrics, namely accuracy, precision, recall and F1 score. The test results are shown in table \ref{tab:ml-test-results} below for all four datasets. Class weight refers to the number of movies in the holdout set which had a positive class label. For example, the holdout set in ML100k consisted of a total of 169 movies, of which 73 were dramas. 495 of the 1000 books in the Goodbooks-10k dataset had the "adult-fiction" label.
 
 \begin{table}[H]
@@ -235,7 +235,7 @@ GB 10k & 495/1000 (50\%) & 0.63 & 0.63 & 0.59 & 0.61 \\
 
 One can see above that the classification accuracy increases with the size of the dataset. ML 100k has the worst performance with 63\% of the movies correctly labelled. ML 10M, which also has the most even split between positive and negative labels (drama vs not drama), has the best performance with 70\% accuracy and an F1 score of 0.69.
 
-\subsection{Confusion matrices}
+\subsection{Confusion Matrices}
 To further break down the performance of the genre prediction, confusion matrices show the relationship between predicted and actual labels for the movies. The confusion matrices for each data set are given in tables \ref{tab:ml100k-confusion-matrix}, \ref{tab:ml1m-confusion-matrix}, \ref{tab:ml10m-confusion-matrix} and \ref{tab:gb10k-confusion-matrix} below. In each matrix, the columns represent the predicted labels and the rows represent the actual labels.
 
 \begin{table}[H]
@@ -306,7 +306,7 @@ To further break down the performance of the genre prediction, confusion matrice
 \label{tab:gb10k-confusion-matrix}
 \end{table}
 
-\subsection{Number of ratings per item}
+\subsection{Number of Ratings per Item}
 Looking at table \ref{tab:ratings-distribution}, one can see that ML10M has the highest average number of ratings per item, 937, compared to only 60 ratings per item in ML100k. Intuitively, the better performance on the dataset with more ratings per movie makes sense as each user-item interaction provides an additional training observation for training item latent factors.
 
 The relationship between number of user ratings and classification accuracy was investigated by binning movies by rating count and then taking the average accuracy for each bin. The results of this investigation are shown in figure \ref{fig:5-ratings-vs-acc}. Each bar represents a single bin's mean classification accuracy. Blue bars are for training data and orange represents testing data. The ranges for the bins were chosen to ensure a minimum of 20 test observations in each bin.
@@ -321,10 +321,10 @@ The relationship between number of user ratings and classification accuracy was 
 
 It can be seen in figure \ref{fig:5-ratings-vs-acc} that as the number of ratings per movie increases, the accuracy with which CGT can predict its genre increases too. For movies with 5000 or more ratings, the average classification accuracy is over 80\%.
 
-\section{Latent factor analysis}
+\section{Latent Factor Analysis}
 To understand the relationship between the latent factors in the embedding layer and genres in ML10M, the item embedding matrix was reduced from 200 dimensions to 2. Dimensionality reduction was done using principal component analysis, in which the 200-dimensional space of the embedding matrix was decomposed into 2 mutually orthogonal dimensions -- or components -- that captured the maximum amount of variance from the original space. While this reduction in dimensionality inevitably leads to a loss of information, it allows the movies to be visualised in the latent factor space.
 
-\subsection{Distribution of genres}
+\subsection{Distribution of Genres}
 Figure \ref{fig:5-genre-pca} shows the distribution of two genres, "Children" and "Documentary", in the first two principal components of the latent factor space. Out of the total 10 000 movies in ML10M, 528 are classified in the "Children" genre and 479 are documentaries. There are only 2 movies which are labelled as both a children's film and a documentary.
 
 \begin{figure}[H]
@@ -354,7 +354,7 @@ Documentary & -0.477 & 0.046 \\
 
 It is shown above that the centre of "Children" genre has a moderately strong positive loading in the first principal component, while the centre of the "Documentary" genre has a similarly strong negative loading.
 
-\subsection{Distribution of ratings}
+\subsection{Distribution of Ratings}
 Figure \ref{fig:5-ratings-scatter} shows the 10 highest rated movies alongside the 10 lowest rated movies. There is a clear separation between these two groups.
 
 \begin{figure}[H]
@@ -377,7 +377,7 @@ The 'hex bin' plot groups movies into hexagons, the boundaries of which are defi
 \label{fig:5-ratings-hexbin}
 \end{figure}
 
-\subsection{Classification accuracy}
+\subsection{Classification Accuracy}
 Finally, the relationship between latent factors and classification accuracy was explored. A similar hex bin plot to figure \ref{fig:5-ratings-hexbin} was used, but instead showed the mean classification accuracy in each hexagon. This is shown in figure \ref{fig:5-accuracy-hexbin}.
 
 Interesting to note is the higher accuracies observed at the more extreme loadings of PC1 and PC2. This suggests that movies with more extreme latent factor values are more descriptive and therefore possibly easier to predict. If this is indeed the case, then the goal of the rating model in CGT should be to train latent factors that are maximally dissimilar to each other.
