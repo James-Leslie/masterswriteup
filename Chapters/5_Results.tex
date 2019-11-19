@@ -1,20 +1,20 @@
-\chapter{Results and Analysis}
+\chapter{Findings}
 \label{results}
 
 This chapter details the results of tuning and evaluating the CGT model. All available user-item ratings were used to tune the rating model, while 90\% of the movie genre labels were used to train and tune the genre model. Only the "drama" label was used in the MovieLens datasets, as it was the most evenly balanced class. Goodbooks-10k used only the "adult-fiction" label, which had very close to 50/50 class weighting. The chapter concludes with an exploratory analysis of the item latent factors.
 
 \section{Hyperparameter Grid Search}
-A number of grid searches were performed to tune the hyperparameters of the CGT model. Due to the different sizes of the MovieLens (ML) datasets, the smallest dataset, ML100k, was used to test the widest range of hyperparameters. Then, a subset of the best-performing hyperparameters were tested again on the ML1M dataset. No hyperparameter tuning was done on ML10M due to its size. The best hyperparameters from ML1M were used for ML10M and GB10k.
+A number of grid searches were performed to tune the hyperparameters of the CGT model. Due to the different sizes of the MovieLens (ML) datasets, the smallest dataset, ML100k, was used to test the widest range of hyperparameters. Then, a subset of the best-performing hyperparameters were tested again on the ML1M dataset. No hyperparameter tuning was done on ML10M due to its size. The best hyperparameters from ML1M were used for ML10M and Goodbooks-10k (GB10k).
 
-In each grid search, the best parameters were chosen as those which minimised the average CV log loss of the genre classifications.
+In each grid search, the best parameter values were defined as those that minimised the average cross-validated log loss of the genre classifications.
 
-When initialising weights of each model, the same random seed was used to allow for reproducible results.
+When initialising the weights of each model, the same random seed was used for reproducibility.
 
 \subsection{MovieLens100k}
-Four grid searches were performed on the ML100k dataset. The first grid search tested various combinations of $k$ -- the number of latent factors, $h$ -- the number of hidden nodes in the rating model, and $j$ -- the number of hidden nodes in the genre model. The second grid search tested different numbers of training epochs and the third tested different values of $dr1$ and $dr2$ -- the dropout rate in the hidden layers of each model. Finally, a number of different activation functions were tested. Each successive hyperparameter search used the best set of hyperparameters from the previous.
+Four grid searches were performed on the ML100k dataset. The first grid search considered various combinations of the number of latent factors, $k$, the number of hidden nodes in the rating model, $h$, and the number of hidden nodes in the genre model, $j$. The second grid search considered different numbers of training epochs, while the third tested different values of the dropout rates, $dr1$ and $dr2$, in the hidden layers of each model. Finally, a number of different activation functions were tested. Each successive hyperparameter search used the best set of hyperparameters from the previous search.
 
 \subsubsection{Number of Latent Factors and Hidden Neurons}
-Values between 50 and 200 were tested for $k$, while $h$ and $j$ were tested in the range of 25 and 100. While tuning these parameters, the dropout rate of the hidden layers, $dr1$ and $dr2$ were both fixed at 0.2 and ReLU was used as the activation function. A total of 12 different combinations were tested in this grid search, the top 5 models are shown in table \ref{tab:ml100k-grid-results1}.
+Values between 50 and 200 were tested for $k$, while $h$ and $j$ were tested in the range of 25 and 100. While tuning these parameters, the dropout rate of the hidden layers, $dr1$ and $dr2$ were both fixed at 0.2 and ReLU was used as the activation function. A total of 12 different combinations were tested in this grid search, and the top 5 models are shown in table \ref{tab:ml100k-grid-results1}.
 
 \begin{table}[H]
 \centering
@@ -48,7 +48,7 @@ The best performing set of hyperparameters in the first grid search was $k=200$,
 \end{figure}
 
 \subsubsection{Number of Epochs}
-Training the model for too many epochs could risk overfitting. Therefore, it was necessary to find the optimal number of epochs for both the rating and genre model. Values of 5, 6 and 7 were tested for the rating model, while values of 3, 4 and 5 were tested for the genre model. This meant a total of 9 different combinations were tested in this grid search, with each one using the hyperparameters $k$, $h$ and $j$ from the best performing model in the first grid search. The top 5 models are shown in table \ref{tab:ml100k-grid-results2}. $E1$ and $E2$ are the number of epochs used for the rating and genre model respectively.
+Training the model for too many epochs could result in overfitting the training set. Therefore, it was necessary to find the optimal number of epochs for both the rating and genre model. Values of 5, 6 and 7 were tested for the rating model, while values of 3, 4 and 5 were tested for the genre model. This meant a total of 9 different combinations were tested in this grid search, with each one using the hyperparameters $k$, $h$ and $j$ from the best performing model in the first grid search. The top 5 models are shown in table \ref{tab:ml100k-grid-results2}. $E1$ and $E2$ are the number of epochs used for the rating and genre models, respectively.
 
 \begin{table}[H]
 \centering
@@ -335,13 +335,13 @@ Figure \ref{fig:5-genre-pca} shows the distribution of two genres, "Children" an
 \label{fig:5-genre-pca}
 \end{figure}
 
-Although the genre model was not trained to predict either of these genres, this figure serves to illustrate the inherent ability of the latent factors to capture descriptive features of movies. While not entirely separable, the difference in principal component loadings between these two genres can be seen in just two dimensions. The geometric means of each genre are given in table \ref{tab:ml10m-genre-pca}
+Although the genre model was not trained to predict either of these genres, this figure serves to illustrate the inherent ability of the latent factors to capture descriptive features of movies. While not entirely separable, the difference in principal component values between these two genres can be seen in just two dimensions. The geometric means of each genre are given in table \ref{tab:ml10m-genre-pca}
 
 \begin{table}[H]
 \centering
 \begin{tabular}{c | c | c}
 \toprule
-\textbf{Genre} & \textbf{$\Bar{PC1}$} & \textbf{$\Bar{PC2}$} \\
+\textbf{Genre} & \textbf{PC1} & \textbf{PC2} \\
 \midrule
 Children & 0.437 & -0.300 \\
 \midrule
@@ -352,10 +352,10 @@ Documentary & -0.477 & 0.046 \\
 \label{tab:ml10m-genre-pca}
 \end{table}
 
-It is shown above that the centre of "Children" genre has a moderately strong positive loading in the first principal component, while the centre of the "Documentary" genre has a similarly strong negative loading.
+It is evident from the table above that a typical children's movie has a positive value for the first principal component and a negative value for the second component, while the opposite is true for the "Documentary" genre.
 
 \subsection{Distribution of Ratings}
-Figure \ref{fig:5-ratings-scatter} shows the 10 highest rated movies alongside the 10 lowest rated movies. There is a clear separation between these two groups.
+Figure \ref{fig:5-ratings-scatter} shows the 10 highest and 10 lowest rated movies in the principal component space. There is a clear separation between these two groups.
 
 \begin{figure}[H]
 \centering
@@ -367,7 +367,7 @@ Figure \ref{fig:5-ratings-scatter} shows the 10 highest rated movies alongside t
 
 The highest rated movies all have strong negative loadings in the first principal component, while the lowest rated movies all have equally strong positive loadings. Figure \ref{fig:5-ratings-hexbin} provides a visualisation of the average rating of all 10 000 movies in the latent factor space.
 
-The 'hex bin' plot groups movies into hexagons, the boundaries of which are defined in PC1 and PC2. The value of each hexagon is calculated as the mean rating of all movies that fall inside its boundaries. There is a clear pattern of higher rated movies towards the bottom left of the coordinate grid, with the lowest rated movies in the top right.
+A hex bin plot groups movies into hexagons with the boundaries defined in terms of the first two principal components. The value of each hexagon is calculated as the mean rating of all movies that fall inside its boundaries. There is a clear pattern of higher rated movies towards the bottom left of the coordinate grid, with the lowest rated movies in the top right.
 
 \begin{figure}[H]
 \centering

@@ -19,17 +19,21 @@ CGT involves two distinct learning tasks:
     \item Learn user and item latent factors through the task of predicting user-item ratings, and
     \item Learn to decode item latent factors to genres.
 \end{enumerate}
-The neural architectures associated with each of the tasks listed above are shown in figure \ref{fig:4_CGT-architecture}. The first model uses latent factors to predict user ratings and is similar in design to the Neural Collaborative Filtering model used by \citeauthor{he2017neural} (the architecture of which is shown in figure \ref{fig:ncf-arch}). The purpose of this model is to train the embedding layer to produce latent factors associated with every item in the ratings dataset.
+The neural architectures associated with each of the tasks listed above are shown in figure \ref{fig:4_CGT-architecture}. The first model, referred to as the rating model, uses latent factors to predict user ratings and is similar in design to the Neural Collaborative Filtering model used by \citeauthor{he2017neural} (the architecture of which is shown in figure \ref{fig:ncf-arch}). The second model, the genre model, uses the embedding layer of the first, with a hidden layer used to decode item latent factors to genres.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{Figures/4_CGT-model.pdf}
 \decoRule
-\caption[CGT architecture]{CGT model consists of two neural networks which share a common item embedding layer}
+\caption[CGT architecture]{CGT model consists of two neural networks which share a common item embedding layer.}
 \label{fig:4_CGT-architecture}
 \end{figure}
 
-The second model uses the embedding layer of the first, with a hidden layer used to decode item latent factors to genres. The models are trained sequentially, with the shared embedding layer being frozen when training the second model.
+The rating model takes a pair of user and item IDs which are then each mapped to two embedding layers (represented by the orange and blue nodes in figure \ref{fig:4_CGT-architecture}) and then concatenated together. The output of this model is a predicted rating for a given user-item pair. The purpose of this model is to train the embedding layer to produce latent factors associated with every item in the ratings dataset.
+
+The genre model takes only an item ID as input, which maps to the same item embedding layer used by the rating model. The output is a predicted genre label. 
+
+The models are trained sequentially, with the shared embedding layer being frozen when training the second model. This approach takes its inspiration from the language models used in text sentiment analysis, which are trained before the sentiment classification model to produce stronger word embeddings \parencite{howard2018universal}.
 
 \section{Rating Model}
 \label{section:rating-model}
@@ -44,7 +48,7 @@ The rating model is the base of the CGT model. The input to this model is a user
 \end{figure}
 
 \subsection{Embedding Layer}
-The first layer of the rating model is a concatenated embedding layer. This layer is comprised of two separate embedding matrices, the same as those used in the matrix factorisation method popularised by \citeauthor{koren2009matrix}. These embedding matrices hold the latent factors of all users and items respectively. The user matrix is of dimension $m\times k$ while the item matrix is $n\times k$, where $m$ and $n$ are the number of distinct users and items respectively, and $k$ is the number of latent factors. Figure \ref{fig:4_CGT-embedding-layer} illustrates the combination of latent factor matrices to form the concatenated embedding layer.
+The first layer of the rating model is a concatenated embedding layer. This layer is comprised of two separate embedding matrices, the same as those used in the matrix factorisation method popularised by \cite{koren2009matrix}. These embedding matrices hold the latent factors of all users and items respectively. The user matrix is of dimension $m\times k$ while the item matrix is $n\times k$, where $m$ and $n$ are the number of distinct users and items respectively, and $k$ is the number of latent factors. Figure \ref{fig:4_CGT-embedding-layer} illustrates the combination of latent factor matrices to form the concatenated embedding layer.
 
 \begin{figure}[H]
 \centering
